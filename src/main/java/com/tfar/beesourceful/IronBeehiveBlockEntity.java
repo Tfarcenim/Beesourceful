@@ -32,6 +32,7 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
     return BeeSourceful.Objectholders.BlockEntities.iron_beehive;
   }
 
+  @Override
   public boolean releaseBee(BlockState state, CompoundNBT nbt, @Nullable List<Entity> entities, BeehiveTileEntity.State beehiveState) {
     BlockPos blockpos = this.getPos();
     if (shouldStayInHive(state,beehiveState)) {

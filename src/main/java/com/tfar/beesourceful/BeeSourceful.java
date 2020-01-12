@@ -160,7 +160,7 @@ public class BeeSourceful {
     public static void poi(final RegistryEvent.Register<PointOfInterestType> event) {
       register(new PointOfInterestType("iron_beehive",
                       Sets.newHashSet(Objectholders.iron_beehive.getStateContainer().getValidStates()),
-                      0, a -> a == Objectholders.POI.iron_beehive, 1),
+                      0, 1),
               "iron_beehive", event.getRegistry());
 
       for (BeeType beeType : BeeType.values()) {
@@ -204,6 +204,9 @@ public class BeeSourceful {
     public static final Item diamond_honeycomb = null;
     public static final Item emerald_honeycomb = null;
     public static final Item ender_honeycomb = null;
+    public static final Item quartz_honeycomb = null;
+    public static final Item lapis_honeycomb = null;
+
 
     public static final Block
             iron_bee_nest = null,

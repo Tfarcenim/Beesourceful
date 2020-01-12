@@ -18,7 +18,7 @@ public class LapisBeeEntity extends IronBeeEntity {
   }
 
   public Block getOre(){
-    return Blocks.REDSTONE_ORE;
+    return Blocks.LAPIS_ORE;
   }
 
   public Block getAllowedHive() {
@@ -31,6 +31,6 @@ public class LapisBeeEntity extends IronBeeEntity {
   }
 
   public Item getHoneyComb(){
-    return BeeSourceful.Objectholders.redstone_honeycomb;
+    return BeeSourceful.Objectholders.lapis_honeycomb;
   }
 }

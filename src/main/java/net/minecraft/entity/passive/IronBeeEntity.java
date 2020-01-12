@@ -95,6 +95,11 @@ public class IronBeeEntity extends BeeEntity {
   }
 
   protected class FindPollinationTargetGoal2 extends BeeEntity.FindPollinationTargetGoal {
+
+    public FindPollinationTargetGoal2(){
+      super();
+    }
+
     @Override
     public void tick() {
       applyPollinationEffect();

@@ -7,6 +7,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.passive.IronBeeEntity;
 import net.minecraft.item.Item;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.World;
 
@@ -31,6 +33,11 @@ public class QuartzBeeEntity extends IronBeeEntity {
   }
 
   public Item getHoneyComb(){
-    return BeeSourceful.Objectholders.redstone_honeycomb;
+    return BeeSourceful.Objectholders.quartz_honeycomb;
+  }
+
+  @Override
+  public boolean isFlowers(BlockPos pos) {
+    return this.world.isBlockPresent(pos) && this.world.getBlockState(pos).getBlock()== Blocks.NETHER_WART;
   }
 }
