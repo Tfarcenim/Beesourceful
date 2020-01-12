@@ -1,0 +1,10 @@
+{
+  "parent": "block/orientable_with_bottom",
+  "textures": {
+    "particle": "beesourceful:block/quartz_bee_nest_side",
+    "bottom": "beesourceful:block/quartz_bee_nest_bottom",
+    "top": "beesourceful:block/quartz_bee_nest_top",
+    "front": "beesourceful:block/quartz_bee_nest_front",
+    "side": "beesourceful:block/quartz_bee_nest_side"
+  }
+}
