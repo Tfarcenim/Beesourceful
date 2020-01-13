@@ -40,13 +40,13 @@ public class IronBeehiveBlock extends BeehiveBlock {
   public ActionResultType onUse(BlockState state, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity player, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
     ItemStack itemstack = player.getHeldItem(p_225533_5_);
     ItemStack itemstack1 = itemstack.copy();
-    int i = state.get(HONEY_LEVEL);
+    int honeyLevel = state.get(HONEY_LEVEL);
     boolean flag = false;
-    if (i >= 5) {
+    if (honeyLevel >= 1) {
       if (itemstack.getItem() == Items.SHEARS) {
         p_225533_2_.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.field_226133_ah_, SoundCategory.NEUTRAL, 1.0F, 1.0F);
         dropResourceHoneycomb(p_225533_2_, p_225533_3_);
-        itemstack.damageItem(1, player, p_226874_1_ -> p_226874_1_.sendBreakAnimation(p_225533_5_));
+        itemstack.damageItem(1, player, player1 -> player1.sendBreakAnimation(p_225533_5_));
         flag = true;
       } else if (itemstack.getItem() == Items.GLASS_BOTTLE) {
         itemstack.shrink(1);
@@ -56,7 +56,6 @@ public class IronBeehiveBlock extends BeehiveBlock {
         } else if (!player.inventory.addItemStackToInventory(new ItemStack(Items.field_226638_pX_))) {
           player.dropItem(new ItemStack(Items.field_226638_pX_), false);
         }
-
         flag = true;
       }
     }
@@ -112,8 +111,12 @@ public class IronBeehiveBlock extends BeehiveBlock {
   public void dropResourceHoneycomb(World p_226878_0_, BlockPos p_226878_1_) {
     TileEntity blockEntity = p_226878_0_.getTileEntity(p_226878_1_);
     if (blockEntity instanceof IronBeehiveBlockEntity) {
-      for (int i = 0; i < 3; ++i) {
-        spawnAsEntity(p_226878_0_, p_226878_1_, new ItemStack(((IronBeehiveBlockEntity) blockEntity).getResourceHoneyComb()));
+      IronBeehiveBlockEntity hive = (IronBeehiveBlockEntity)blockEntity;
+      if (hive.hasCombs()) {
+        ItemStack comb = new ItemStack(hive.getResourceHoneyComb());
+        for (int i = 0; i < 3; ++i) {
+          spawnAsEntity(p_226878_0_, p_226878_1_, comb);
+        }
       }
     }
   }

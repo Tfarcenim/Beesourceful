@@ -6,29 +6,27 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.passive.IronBeeEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.BeehiveTileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class IronBeehiveBlockEntity extends BeehiveTileEntity {
 
-  public Item honeycomb = Items.AIR;
+  public List<Item> honeycombs = new ArrayList<>();
 
   @Nonnull
   @Override
@@ -72,7 +70,7 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
                 if (i + j > 5) {
                   --j;
                 }
-                this.honeycomb = beeentity.getHoneyComb();
+                this.honeycombs.add(beeentity.getHoneyComb());
                 this.world.setBlockState(this.getPos(), state.with(BeehiveBlock.HONEY_LEVEL, i + j));
               }
             }
@@ -127,7 +125,13 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
   }
 
   public Item getResourceHoneyComb(){
+    Item honeycomb = honeycombs.get(honeycombs.size()-1);
+    honeycombs.remove(honeycomb);
     return honeycomb;
+  }
+
+  public boolean hasCombs(){
+    return honeycombs.size() > 0;
   }
 
   public boolean isAllowedBee(IronBeeEntity bee){
@@ -138,14 +142,28 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
   @Override
   public void read(CompoundNBT nbt) {
     super.read(nbt);
-    this.honeycomb = ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString("Honeycomb")));
+    if (nbt.contains("Honeycombs")){
+      CompoundNBT combs = (CompoundNBT) nbt.get("Honeycombs");
+      int i = 0;
+      while (combs.contains(String.valueOf(i))){
+        honeycombs.add(ForgeRegistries.ITEMS.getValue(new ResourceLocation(combs.getString(String.valueOf(i)))));
+        i++;
+      }
+      ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString("Honeycomb")));
+    }
   }
 
   @Nonnull
   @Override
   public CompoundNBT write(CompoundNBT nbt) {
     super.write(nbt);
-    nbt.putString("Honeycomb",honeycomb.getRegistryName().toString());
+    if (!honeycombs.isEmpty()){
+      CompoundNBT combs = new CompoundNBT();
+      for (int i = 0; i < honeycombs.size();i++){
+        combs.putString(String.valueOf(i),honeycombs.get(i).getRegistryName().toString());
+      }
+      combs.put("Honeycombs",combs);
+    }
     return nbt;
   }
 

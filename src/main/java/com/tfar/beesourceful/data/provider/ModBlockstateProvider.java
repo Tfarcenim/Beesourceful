@@ -44,7 +44,7 @@ public class ModBlockstateProvider extends BlockStateProvider {
                       ConfiguredModel.builder().modelFile(modelHoney).build() : ConfiguredModel.builder().modelFile(model).build());
             });
 
-    BeeSourceful.RegistryEvents.blocks.stream().filter(block -> block.getRegistryName().getPath().contains("honeycomb"))
+    BeeSourceful.RegistryEvents.blocks.stream().filter(block -> block.getRegistryName().getPath().contains("honeycombs"))
             .forEach(block -> {
               String name = block.getRegistryName().getPath();
               ModelFile model = getBuilder(name)
