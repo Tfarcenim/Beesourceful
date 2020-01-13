@@ -3,6 +3,8 @@ package com.tfar.beesourceful;
 import com.google.common.collect.Sets;
 import com.tfar.beesourceful.block.IronBeehiveBlock;
 import com.tfar.beesourceful.entity.*;
+import com.tfar.beesourceful.feature.OreBeeNestFeature;
+import io.netty.handler.traffic.AbstractTrafficShapingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -14,9 +16,15 @@ import net.minecraft.entity.passive.IronBeeEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.tileentity.IronBeehiveBlockEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.village.PointOfInterestType;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.ReplaceBlockConfig;
+import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -58,6 +66,59 @@ public class BeeSourceful {
     Objectholders.iron_beehive.getStateContainer().getValidStates().forEach(state -> pointOfInterestTypeMap.put(state,
             Objectholders.POI.iron_beehive));
     PointOfInterestType.field_221073_u.putAll(pointOfInterestTypeMap);
+    ForgeRegistries.BIOMES.forEach(biome -> {
+      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.iron_bee_nest
+              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
+                      Objectholders.iron_bee_nest.getDefaultState()
+              )).createDecoratedFeature(Placement.COUNT_RANGE.
+                      configure(new CountRangeConfigWrapper(5, 0, 64))));
+
+      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.redstone_bee_nest
+              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
+                      Objectholders.redstone_bee_nest.getDefaultState()
+              )).createDecoratedFeature(Placement.COUNT_RANGE.
+                      configure(new CountRangeConfigWrapper(5, 0, 16))));
+
+      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.gold_bee_nest
+              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
+                      Objectholders.redstone_bee_nest.getDefaultState()
+              )).createDecoratedFeature(Placement.COUNT_RANGE.
+                      configure(new CountRangeConfigWrapper(3, 0, 32))));
+
+      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.diamond_bee_nest
+              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
+                      Objectholders.diamond_bee_nest.getDefaultState()
+              )).createDecoratedFeature(Placement.COUNT_RANGE.
+                      configure(new CountRangeConfigWrapper(4, 0, 16))));
+
+      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.lapis_bee_nest
+              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
+                      Objectholders.lapis_bee_nest.getDefaultState()
+              )).createDecoratedFeature(Placement.COUNT_RANGE.
+                      configure(new CountRangeConfigWrapper(4, 0, 32))));
+
+      if (biome.getCategory() == Biome.Category.EXTREME_HILLS) biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES,
+              Objectholders.Features.emerald_bee_nest
+              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
+                      Objectholders.emerald_bee_nest.getDefaultState()
+              )).createDecoratedFeature(Placement.COUNT_RANGE.
+                      configure(new CountRangeConfigWrapper(5, 0, 16))));
+
+      biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Objectholders.Features.ender_bee_nest
+              .configure(new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(),
+                      Objectholders.ender_bee_nest.getDefaultState()
+              )).createDecoratedFeature(Placement.COUNT_RANGE.
+                      configure(new CountRangeConfigWrapper(20, 0, 80))));
+
+      if (biome.getCategory() == Biome.Category.NETHER) biome.
+              addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.quartz_bee_nest
+              .configure(new ReplaceBlockConfig(Blocks.NETHERRACK.getDefaultState(),
+                      Objectholders.quartz_bee_nest.getDefaultState()
+              )).createDecoratedFeature(Placement.COUNT_RANGE.
+                      configure(new CountRangeConfigWrapper(5, 0, 128))));
+    });
+
+
   }
 
   private void doClientStuff(final FMLClientSetupEvent event) {
@@ -76,7 +137,7 @@ public class BeeSourceful {
       register(new IronBeehiveBlock(properties), "iron_beehive", event.getRegistry());
       for (BeeType beeType : BeeType.values()) {
         register(new IronBeehiveBlock(properties), beeType + "_bee_nest", event.getRegistry());
-        register(new Block(properties), beeType + "_honeycomb_block", event.getRegistry());
+        register(new Block(honeycomb), beeType + "_honeycomb_block", event.getRegistry());
       }
     }
 
@@ -171,14 +232,21 @@ public class BeeSourceful {
       }
     }
 
+    @SubscribeEvent
+    public static void feature(final RegistryEvent.Register<Feature<?>> event) {
+      for (BeeType beeType : BeeType.values()) {
+        register(new OreBeeNestFeature(ReplaceBlockConfig::deserialize, (EntityType<? extends IronBeeEntity>) ForgeRegistries.ENTITIES.getValue(new ResourceLocation(MODID,beeType+"_bee"))), beeType+"_bee_nest", event.getRegistry());
+      }
+    }
+
     private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
       register(obj, new ResourceLocation(MODID, name), registry);
     }
 
     private static <T extends IForgeRegistryEntry<T>> void register(T obj, ResourceLocation name, IForgeRegistry<T> registry) {
       registry.register(obj.setRegistryName(name));
-      if (obj instanceof Block) blocks.add((Block)obj);
-      if (obj instanceof Item) items.add((Item)obj);
+      if (obj instanceof Block) blocks.add((Block) obj);
+      if (obj instanceof Item) items.add((Item) obj);
     }
   }
 
@@ -187,10 +255,10 @@ public class BeeSourceful {
   public static class ClientEvents {
     @SubscribeEvent
     public static void registerModels(FMLClientSetupEvent event) {
-      for (BeeType beeType: BeeType.values())
-      RenderingRegistry.registerEntityRenderingHandler(
-              (EntityType<BeeEntity>)ForgeRegistries.ENTITIES.getValue(new ResourceLocation(MODID,beeType+"_bee")),
-              (EntityRendererManager p_i226033_1_) -> new IronBeeRenderer(p_i226033_1_,beeType));
+      for (BeeType beeType : BeeType.values())
+        RenderingRegistry.registerEntityRenderingHandler(
+                (EntityType<BeeEntity>) ForgeRegistries.ENTITIES.getValue(new ResourceLocation(MODID, beeType + "_bee")),
+                (EntityRendererManager p_i226033_1_) -> new IronBeeRenderer(p_i226033_1_, beeType));
     }
   }
 
@@ -247,6 +315,19 @@ public class BeeSourceful {
       public static final EntityType<IronBeeEntity> emerald_bee = null;
       public static final EntityType<IronBeeEntity> quartz_bee = null;
       public static final EntityType<IronBeeEntity> ender_bee = null;
+    }
+
+    @ObjectHolder(MODID)
+    public static class Features {
+      public static final Feature<ReplaceBlockConfig> iron_bee_nest = null;
+      public static final Feature<ReplaceBlockConfig> redstone_bee_nest = null;
+      public static final Feature<ReplaceBlockConfig> gold_bee_nest = null;
+      public static final Feature<ReplaceBlockConfig> ender_bee_nest = null;
+      public static final Feature<ReplaceBlockConfig> diamond_bee_nest = null;
+      public static final Feature<ReplaceBlockConfig> emerald_bee_nest = null;
+      public static final Feature<ReplaceBlockConfig> quartz_bee_nest = null;
+      public static final Feature<ReplaceBlockConfig> lapis_bee_nest = null;
+
     }
   }
 }

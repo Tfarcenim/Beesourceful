@@ -1,5 +1,6 @@
-package com.tfar.beesourceful;
+package net.minecraft.tileentity;
 
+import com.tfar.beesourceful.BeeSourceful;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -117,5 +118,11 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
     super.write(nbt);
     nbt.putString("Honeycomb",honeycomb.getRegistryName().toString());
     return nbt;
+  }
+
+  public static class Bee2 extends Bee {
+    public Bee2(CompoundNBT p_i225767_1_, int p_i225767_2_, int p_i225767_3_) {
+      super(p_i225767_1_, p_i225767_2_, p_i225767_3_);
+    }
   }
 }

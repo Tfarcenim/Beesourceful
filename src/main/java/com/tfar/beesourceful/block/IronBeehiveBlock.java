@@ -1,6 +1,6 @@
 package com.tfar.beesourceful.block;
 
-import com.tfar.beesourceful.IronBeehiveBlockEntity;
+import net.minecraft.tileentity.IronBeehiveBlockEntity;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.BlockState;

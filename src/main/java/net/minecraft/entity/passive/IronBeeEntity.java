@@ -1,7 +1,7 @@
 package net.minecraft.entity.passive;
 
 import com.tfar.beesourceful.BeeSourceful;
-import com.tfar.beesourceful.IronBeehiveBlockEntity;
+import net.minecraft.tileentity.IronBeehiveBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
