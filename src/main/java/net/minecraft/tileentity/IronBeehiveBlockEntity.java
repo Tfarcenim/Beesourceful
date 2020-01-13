@@ -6,10 +6,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.passive.IronBeeEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.BeehiveTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -85,6 +88,32 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
           return false;
         }
       }
+    }
+  }
+
+  public void tryEnterHive(Entity bee, boolean hasNectar, int ticksInHive) {
+    if (this.bees.size() < 3) {
+      bee.removePassengers();
+      CompoundNBT nbt = new CompoundNBT();
+      bee.writeUnlessPassenger(nbt);
+      this.bees.add(new BeehiveTileEntity.Bee(nbt, ticksInHive, hasNectar ? 2400 : 600));
+      if (this.world != null) {
+        if (bee instanceof IronBeeEntity) {
+          IronBeeEntity bee1 = (IronBeeEntity)bee;
+          if (bee1.hasFlower() && (!this.hasFlowerPos() || this.world.rand.nextBoolean())) {
+            this.flowerPos = bee1.getFlowerPos();
+          }
+        }
+        BlockPos lvt_5_2_ = this.getPos();
+        this.world.playSound(null, (double)lvt_5_2_.getX(), (double)lvt_5_2_.getY(), (double)lvt_5_2_.getZ(), SoundEvents.field_226131_af_, SoundCategory.BLOCKS, 1.0F, 1.0F);
+      }
+      if (bee.getType() == BeeSourceful.Objectholders.Entities.ender_bee){
+        this.world.addParticle(ParticleTypes.PORTAL, bee.getParticleX(0.5D),
+                bee.getRandomBodyY() - 0.25D, bee.getParticleZ(0.5D),
+                (world.rand.nextDouble() - 0.5D) * 2.0D, -world.rand.nextDouble(),
+                (world.rand.nextDouble() - 0.5D) * 2.0D);
+      }
+      bee.remove();
     }
   }
 

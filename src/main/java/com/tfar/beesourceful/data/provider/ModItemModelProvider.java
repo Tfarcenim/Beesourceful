@@ -2,6 +2,7 @@ package com.tfar.beesourceful.data.provider;
 
 import com.tfar.beesourceful.BeeSourceful;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.item.BlockItem;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -15,8 +16,9 @@ public class ModItemModelProvider extends ItemModelProvider {
   protected void registerModels() {
     BeeSourceful.RegistryEvents.items.forEach(item -> {
       String path = item.getRegistryName().getPath();
-      getBuilder(path)
-              .parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
+      if (item instanceof BlockItem)
+      getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
+      else getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc(path)));
     });
 
   }
