@@ -1,6 +1,9 @@
 package net.minecraft.entity.passive;
 
 import com.tfar.beesourceful.BeeSourceful;
+import net.minecraft.block.DoublePlantBlock;
+import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.IronBeehiveBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -25,6 +28,8 @@ import net.minecraftforge.common.Tags;
 import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,19 +46,19 @@ public class IronBeeEntity extends BeeEntity {
     this.goalSelector.addGoal(1, new BeeEntity.EnterBeehiveGoal());
     this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
     this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.fromTag(ItemTags.field_226159_I_), false));
-    this.pollinateGoal = new BeeEntity.PollinateGoal();
+    this.pollinateGoal = new PollinateGoal2();
     this.goalSelector.addGoal(4, this.pollinateGoal);
     this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.25D));
     this.goalSelector.addGoal(5, new UpdateBeehiveGoal2());
-    this.moveToHiveGoal = new BeeEntity.FindBeehiveGoal();
+    this.moveToHiveGoal = new FindBeehiveGoal2();
     this.goalSelector.addGoal(5, this.moveToHiveGoal);
     this.moveToFlowerGoal = new BeeEntity.FindFlowerGoal();
     this.goalSelector.addGoal(6, this.moveToFlowerGoal);
     this.goalSelector.addGoal(7, new FindPollinationTargetGoal2());
-    this.goalSelector.addGoal(8, new WanderGoal());
+    this.goalSelector.addGoal(8, new BeeEntity.WanderGoal());
     this.goalSelector.addGoal(9, new SwimGoal(this));
-    this.targetSelector.addGoal(1, (new AngerGoal(this)).setCallsForHelp());
-    this.targetSelector.addGoal(2, new AttackPlayerGoal(this));
+    this.targetSelector.addGoal(1, (new BeeEntity.AngerGoal(this)).setCallsForHelp());
+    this.targetSelector.addGoal(2, new BeeEntity.AttackPlayerGoal(this));
   }
 
   @Override
@@ -81,7 +86,6 @@ public class IronBeeEntity extends BeeEntity {
     /**
      * ()Ljava/util/List;
      */
-    @SuppressWarnings("ConstantConditions")
     public List<BlockPos> getNearbyFreeHives() {
       BlockPos blockpos = new BlockPos(IronBeeEntity.this);
       PointOfInterestManager pointofinterestmanager = ((ServerWorld) world).getPointOfInterestManager();
@@ -119,6 +123,37 @@ public class IronBeeEntity extends BeeEntity {
         }
       }
     }
+  }
+
+  public class FindBeehiveGoal2 extends BeeEntity.FindBeehiveGoal {
+
+    public FindBeehiveGoal2(){
+      super();
+    }
+
+    @Override
+    public boolean canBeeStart() {
+      return hivePos != null && !detachHome() && canEnterHive() && !this.isCloseEnough(hivePos)
+              && isHiveValid();
+    }
+  }
+
+  public class PollinateGoal2 extends BeeEntity.PollinateGoal {
+
+    public PollinateGoal2(){
+      super();
+    }
+
+    @Override
+    public Optional<BlockPos> getFlower() {
+      return this.findFlower(getFlowerPredicate(), 5.0D);
+    }
+  }
+
+  protected final Predicate<BlockState> flowerPredicate = state -> state.isIn(BlockTags.field_226148_H_) ? state.getBlock() != Blocks.SUNFLOWER || state.get(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER : state.isIn(BlockTags.SMALL_FLOWERS);
+
+  public Predicate<BlockState> getFlowerPredicate(){
+    return flowerPredicate;
   }
 
   public Block getOre(){

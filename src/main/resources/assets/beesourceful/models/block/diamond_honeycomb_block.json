@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "beesourceful:block/diamond_honeycomb_block"
+  }
+}

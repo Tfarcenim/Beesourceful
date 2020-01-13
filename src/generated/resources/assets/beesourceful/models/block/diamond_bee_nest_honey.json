@@ -1,0 +1,10 @@
+{
+  "parent": "block/orientable_with_bottom",
+  "textures": {
+    "particle": "beesourceful:block/diamond_bee_nest_side",
+    "bottom": "beesourceful:block/diamond_bee_nest_bottom",
+    "top": "beesourceful:block/diamond_bee_nest_top",
+    "front": "beesourceful:block/diamond_bee_nest_front_honey",
+    "side": "beesourceful:block/diamond_bee_nest_side"
+  }
+}

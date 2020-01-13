@@ -61,11 +61,13 @@ public class BeeSourceful {
 
   private void setup(final FMLCommonSetupEvent event) {
     Map<BlockState, PointOfInterestType> pointOfInterestTypeMap = new HashMap<>();
-    Objectholders.iron_bee_nest.getStateContainer().getValidStates().forEach(state -> pointOfInterestTypeMap.put(state,
-            Objectholders.POI.iron_bee_nest));
-    Objectholders.iron_beehive.getStateContainer().getValidStates().forEach(state -> pointOfInterestTypeMap.put(state,
-            Objectholders.POI.iron_beehive));
+
+    RegistryEvents.blocks.stream().filter(IronBeehiveBlock.class::isInstance).forEach(block ->
+            block.getStateContainer().getValidStates().forEach(state ->
+                    pointOfInterestTypeMap.put(state,ForgeRegistries.POI_TYPES.getValue(block.getRegistryName()))));
+
     PointOfInterestType.field_221073_u.putAll(pointOfInterestTypeMap);
+
     ForgeRegistries.BIOMES.forEach(biome -> {
       biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.iron_bee_nest
               .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
