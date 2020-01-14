@@ -1,3 +1,6 @@
 {
-  "parent": "beesourceful:diamond_honeycomb"
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "beesourceful:item/diamond_honeycomb"
+  }
 }

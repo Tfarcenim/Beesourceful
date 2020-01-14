@@ -18,7 +18,8 @@ public class ModItemModelProvider extends ItemModelProvider {
       String path = item.getRegistryName().getPath();
       if (item instanceof BlockItem)
       getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
-      else getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc(path)));
+      else getBuilder(path).parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+              .texture("layer0",modLoc("item/"+path));
     });
 
   }

@@ -1,3 +1,6 @@
 {
-  "parent": "beesourceful:lapis_honeycomb"
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "beesourceful:item/lapis_honeycomb"
+  }
 }
