@@ -5,21 +5,26 @@ import com.tfar.beesourceful.block.IronBeehiveBlock;
 import com.tfar.beesourceful.entity.*;
 import com.tfar.beesourceful.feature.OreBeeNestFeature;
 import io.netty.handler.traffic.AbstractTrafficShapingHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.dispenser.IBlockSource;
+import net.minecraft.dispenser.OptionalDispenseBehavior;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.passive.IronBeeEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.*;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tileentity.BeehiveTileEntity;
 import net.minecraft.tileentity.IronBeehiveBlockEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.PointOfInterestType;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
@@ -118,6 +123,68 @@ public class BeeSourceful {
                       Objectholders.quartz_bee_nest.getDefaultState()
               )).createDecoratedFeature(Placement.COUNT_RANGE.
                       configure(new CountRangeConfigWrapper(5, 0, 128))));
+    });
+
+    DispenserBlock.registerDispenseBehavior(Items.SHEARS.asItem(), new OptionalDispenseBehavior() {
+      /**
+       * Dispense the specified stack, play the dispense sound and spawn particles.
+       */
+      @SuppressWarnings("deprecation")
+      protected ItemStack dispenseStack(IBlockSource p_82487_1_, ItemStack stack) {
+        World world = p_82487_1_.getWorld();
+        if (!world.isRemote()) {
+          this.successful = false;
+          BlockPos blockpos = p_82487_1_.getBlockPos().offset(p_82487_1_.getBlockState().get(DispenserBlock.FACING));
+
+          for(net.minecraft.entity.Entity entity : world.getEntitiesInAABBexcluding(null, new AxisAlignedBB(blockpos), e -> !e.isSpectator() && e instanceof net.minecraftforge.common.IShearable)) {
+            net.minecraftforge.common.IShearable target = (net.minecraftforge.common.IShearable)entity;
+            if (target.isShearable(stack, world, blockpos)) {
+              java.util.List<ItemStack> drops = target.onSheared(stack, entity.world, blockpos,
+                      net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.enchantment.Enchantments.FORTUNE, stack));
+              java.util.Random rand = new java.util.Random();
+              drops.forEach(d -> {
+                net.minecraft.entity.item.ItemEntity ent = entity.entityDropItem(d, 1.0F);
+                ent.setMotion(ent.getMotion().add((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
+              });
+              if (stack.attemptDamageItem(1, world.rand, null)) {
+                stack.setCount(0);
+              }
+
+              this.successful = true;
+              break;
+            }
+          }
+
+          if (!this.successful) {
+            BlockState blockstate = world.getBlockState(blockpos);
+            if (blockstate.isIn(BlockTags.field_226151_aa_)) {
+              int i = blockstate.get(BeehiveBlock.HONEY_LEVEL);
+              if (i >= 5) {
+                if (stack.attemptDamageItem(1, world.rand, null)) {
+                  stack.setCount(0);
+                }
+
+                BeehiveBlock.dropHoneycomb(world, blockpos);
+                ((BeehiveBlock)blockstate.getBlock()).takeHoney(world, blockstate, blockpos, null, BeehiveTileEntity.State.BEE_RELEASED);
+                this.successful = true;
+              }
+            } else if (blockstate.getBlock() instanceof IronBeehiveBlock){
+              int i = blockstate.get(BeehiveBlock.HONEY_LEVEL);
+              if (i >= 5) {
+                if (stack.attemptDamageItem(1, world.rand, null)) {
+                  stack.setCount(0);
+                }
+
+                IronBeehiveBlock.dropResourceHoneyComb((IronBeehiveBlock) blockstate.getBlock(),world, blockpos);
+                ((BeehiveBlock)blockstate.getBlock()).takeHoney(world, blockstate, blockpos, null,
+                        BeehiveTileEntity.State.BEE_RELEASED);
+                this.successful = true;
+              }
+            }
+          }
+        }
+        return stack;
+      }
     });
 
 

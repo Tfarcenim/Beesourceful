@@ -37,40 +37,40 @@ public class IronBeehiveBlock extends BeehiveBlock {
     return null;
   }
 
-  public ActionResultType onUse(BlockState state, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity player, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+  public ActionResultType onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
     ItemStack itemstack = player.getHeldItem(p_225533_5_);
     ItemStack itemstack1 = itemstack.copy();
     int honeyLevel = state.get(HONEY_LEVEL);
-    boolean flag = false;
-    if (honeyLevel >= 1) {
+    boolean angerBees = false;
+    if (honeyLevel >= 5) {
       if (itemstack.getItem() == Items.SHEARS) {
-        p_225533_2_.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.field_226133_ah_, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-        dropResourceHoneycomb(p_225533_2_, p_225533_3_);
+        world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.field_226133_ah_, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        dropResourceHoneycomb(world, pos);
         itemstack.damageItem(1, player, player1 -> player1.sendBreakAnimation(p_225533_5_));
-        flag = true;
+        angerBees = true;
       } else if (itemstack.getItem() == Items.GLASS_BOTTLE) {
         itemstack.shrink(1);
-        p_225533_2_.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
         if (itemstack.isEmpty()) {
           player.setHeldItem(p_225533_5_, new ItemStack(Items.field_226638_pX_));
         } else if (!player.inventory.addItemStackToInventory(new ItemStack(Items.field_226638_pX_))) {
           player.dropItem(new ItemStack(Items.field_226638_pX_), false);
         }
-        flag = true;
+        angerBees = true;
       }
     }
 
-    if (flag) {
-      if (!CampfireBlock.isLitCampfireInRange(p_225533_2_, p_225533_3_, 5)) {
-        if (this.hasBees(p_225533_2_, p_225533_3_)) {
-          this.angerNearbyBees(p_225533_2_, p_225533_3_);
+    if (angerBees) {
+      if (!CampfireBlock.isLitCampfireInRange(world, pos, 5)) {
+        if (this.hasBees(world, pos)) {
+          this.angerNearbyBees(world, pos);
         }
 
-        this.takeHoney(p_225533_2_, state, p_225533_3_, player, BeehiveTileEntity.State.EMERGENCY);
+        this.takeHoney(world, state, pos, player, BeehiveTileEntity.State.EMERGENCY);
       } else {
-        this.takeHoney(p_225533_2_, state, p_225533_3_);
+        this.takeHoney(world, state, pos);
         if (player instanceof ServerPlayerEntity) {
-          CriteriaTriggers.SAFELY_HARVEST_HONEY.test((ServerPlayerEntity) player, p_225533_3_, itemstack1);
+          CriteriaTriggers.SAFELY_HARVEST_HONEY.test((ServerPlayerEntity) player, pos, itemstack1);
         }
       }
 
@@ -112,11 +112,9 @@ public class IronBeehiveBlock extends BeehiveBlock {
     TileEntity blockEntity = p_226878_0_.getTileEntity(p_226878_1_);
     if (blockEntity instanceof IronBeehiveBlockEntity) {
       IronBeehiveBlockEntity hive = (IronBeehiveBlockEntity)blockEntity;
-      if (hive.hasCombs()) {
+      while (hive.hasCombs()) {
         ItemStack comb = new ItemStack(hive.getResourceHoneyComb());
-        for (int i = 0; i < 3; ++i) {
           spawnAsEntity(p_226878_0_, p_226878_1_, comb);
-        }
       }
     }
   }
