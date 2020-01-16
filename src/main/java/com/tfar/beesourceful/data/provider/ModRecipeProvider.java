@@ -24,5 +24,12 @@ public class ModRecipeProvider extends RecipeProvider {
             .addCriterion("has_iron", this.hasItem(Tags.Items.INGOTS_IRON))
             .addCriterion("has_hive", this.hasItem(Blocks.field_226906_mb_))
             .build(consumer);
+    ShapedRecipeBuilder.shapedRecipe(BeeSourceful.Objectholders.centrifuge)
+            .key('a', Tags.Items.INGOTS_IRON)
+            .key('b', Blocks.GRINDSTONE)
+            .patternLine("aaa").patternLine("aba").patternLine("aaa")
+            .addCriterion("has_iron", this.hasItem(Tags.Items.INGOTS_IRON))
+            .addCriterion("has_hive", this.hasItem(Blocks.field_226906_mb_))
+            .build(consumer);
   }
 }

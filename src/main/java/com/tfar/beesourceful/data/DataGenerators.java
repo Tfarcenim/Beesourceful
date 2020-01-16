@@ -1,9 +1,6 @@
 package com.tfar.beesourceful.data;
 
-import com.tfar.beesourceful.data.provider.ModBlockstateProvider;
-import com.tfar.beesourceful.data.provider.ModItemModelProvider;
-import com.tfar.beesourceful.data.provider.ModLootTableProvider;
-import com.tfar.beesourceful.data.provider.ModRecipeProvider;
+import com.tfar.beesourceful.data.provider.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,6 +17,7 @@ public class DataGenerators {
     if (e.includeClient()){
       gen.addProvider(new ModBlockstateProvider(gen,helper));
       gen.addProvider(new ModItemModelProvider(gen,helper));
+      gen.addProvider(new ModLanguageProvider(gen));
     }
     if (e.includeServer()){
       gen.addProvider(new ModLootTableProvider(gen));

@@ -1,0 +1,11 @@
+{
+  "type": "beesourceful:centrifuge",
+  "ingredient": {
+    "tag": "forge:honeycombs/gold"
+  },
+  "results": [
+    "beesourceful:beeswax",
+    "minecraft:gold_ingot"
+  ],
+  "time": 200
+}

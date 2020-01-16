@@ -1,0 +1,11 @@
+{
+  "type": "beesourceful:centrifuge",
+  "ingredient": {
+    "tag": "forge:honeycombs/iron"
+  },
+  "results": [
+    "beesourceful:beeswax",
+    "minecraft:iron_ingot"
+  ],
+  "time": 200
+}

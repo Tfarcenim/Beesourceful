@@ -1,0 +1,11 @@
+{
+  "type": "beesourceful:centrifuge",
+  "ingredient": {
+    "tag": "forge:honeycombs/diamond"
+  },
+  "results": [
+    "beesourceful:beeswax",
+    "minecraft:diamond"
+  ],
+  "time": 200
+}
