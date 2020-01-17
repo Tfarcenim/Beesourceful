@@ -20,6 +20,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,7 +40,7 @@ public class CentrifugeBlockEntity extends TileEntity implements ITickableTileEn
   public int time = 0;
   public CentrifugeRecipe recipe;
   public ItemStack failedMatch = ItemStack.EMPTY;
-  public int totalTime = 1;
+  public int totalTime = 0;
 
   public CentrifugeBlockEntity() {
     super(BeeSourceful.Objectholders.BlockEntities.centrifuge);
@@ -53,8 +54,9 @@ public class CentrifugeBlockEntity extends TileEntity implements ITickableTileEn
         CentrifugeRecipe irecipe = getRecipe();
         boolean valid = this.canProcess(irecipe);
         if (valid) {
+          this.totalTime = this.getTime();
           ++this.time;
-          if (this.time >= this.totalTime) {
+          if (this.time == this.totalTime) {
             this.time = 0;
             this.totalTime = this.getTime();
             this.processItem(irecipe);
@@ -69,17 +71,22 @@ public class CentrifugeBlockEntity extends TileEntity implements ITickableTileEn
   }
 
 
-
   protected boolean canProcess(@Nullable CentrifugeRecipe recipe) {
     if (recipe != null) {
-      List<ItemStack> outputs = recipe.outputs;
-      ItemStack recipeOutput1 = outputs.get(0);
-      ItemStack recipeOutput2 = outputs.get(1);
+      List<Pair<ItemStack, Double>> outputs = recipe.outputs;
+      ItemStack recipeOutput1 = outputs.get(0).getLeft();
+      ItemStack recipeOutput2 = outputs.get(1).getLeft();
       ItemStack stackInOutput1 = h.getStackInSlot(OUTPUT1);
       ItemStack stackInOutput2 = h.getStackInSlot(OUTPUT2);
+
       if (stackInOutput1.isEmpty() && stackInOutput2.isEmpty()) return true;
-        else if (!stackInOutput1.isItemEqual(recipeOutput1) || !stackInOutput2.isItemEqual(recipeOutput2)) return false;
-        else return stackInOutput1.getCount() + recipeOutput1.getCount() <= stackInOutput1.getMaxStackSize() &&
+
+      if (stackInOutput1.isEmpty() && stackInOutput2.getItem() == recipeOutput2.getItem())return true;
+
+      if (stackInOutput2.isEmpty() && stackInOutput1.getItem() == recipeOutput1.getItem())return true;
+
+      else if (!stackInOutput1.isItemEqual(recipeOutput1) || !stackInOutput2.isItemEqual(recipeOutput2)) return false;
+      else return stackInOutput1.getCount() + recipeOutput1.getCount() <= stackInOutput1.getMaxStackSize() &&
                 stackInOutput2.getCount() + recipeOutput2.getCount() <= stackInOutput2.getMaxStackSize();
     }
     return false;
@@ -88,37 +95,41 @@ public class CentrifugeBlockEntity extends TileEntity implements ITickableTileEn
   private void processItem(@Nullable CentrifugeRecipe recipe) {
     if (recipe != null && this.canProcess(recipe)) {
       ItemStack comb = h.getStackInSlot(HONEYCOMB_SLOT);
-      List<ItemStack> outputs = recipe.outputs;
+      List<Pair<ItemStack, Double>> outputs = recipe.outputs;
 
-      ItemStack output1 = outputs.get(0);
-      ItemStack output2 = outputs.get(1);
+      ItemStack output1 = outputs.get(0).getLeft();
+      ItemStack output2 = outputs.get(1).getLeft();
       ItemStack glass_bottle = h.getStackInSlot(BOTTLE_SLOT);
 
       ItemStack stackInOutput1 = h.getStackInSlot(OUTPUT1);
       ItemStack stackInOutput2 = h.getStackInSlot(OUTPUT2);
 
       ItemStack honey_bottle = h.getStackInSlot(HONEY_BOTTLE);
-
-      if (stackInOutput1.isEmpty()) {
-        this.h.setStackInSlot(OUTPUT1, output1.copy());
-      } else if (stackInOutput1.getItem() == output1.getItem()) {
-        stackInOutput1.grow(output1.getCount());
+      if (outputs.get(0).getRight() >= world.rand.nextDouble()) {
+        if (stackInOutput1.isEmpty()) {
+          this.h.setStackInSlot(OUTPUT1, output1.copy());
+        } else if (stackInOutput1.getItem() == output1.getItem()) {
+          stackInOutput1.grow(output1.getCount());
+        }
       }
 
-      if (stackInOutput2.isEmpty()) {
-        this.h.setStackInSlot(OUTPUT2, output2.copy());
-      } else if (stackInOutput2.getItem() == output2.getItem()) {
-        stackInOutput2.grow(output2.getCount());
+      if (outputs.get(1).getRight() >= world.rand.nextDouble()) {
+        if (stackInOutput2.isEmpty()) {
+          this.h.setStackInSlot(OUTPUT2, output2.copy());
+        } else if (stackInOutput2.getItem() == output2.getItem()) {
+          stackInOutput2.grow(output2.getCount());
+        }
       }
 
-      if (honey_bottle.isEmpty()) {
-        this.h.setStackInSlot(HONEY_BOTTLE, new ItemStack(Items.field_226638_pX_));
-      } else if (honey_bottle.getItem() == glass_bottle.getItem()) {
-        honey_bottle.grow(1);
+      if (.2 >= world.rand.nextDouble()) {
+        if (honey_bottle.isEmpty()) {
+          this.h.setStackInSlot(HONEY_BOTTLE, new ItemStack(Items.field_226638_pX_));
+        } else {
+          honey_bottle.grow(1);
+        }
+        glass_bottle.shrink(1);
       }
-
       comb.shrink(1);
-      glass_bottle.shrink(1);
     }
     time = 0;
   }

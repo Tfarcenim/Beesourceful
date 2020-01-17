@@ -3,6 +3,7 @@ package com.tfar.beesourceful.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.tfar.beesourceful.BeeSourceful;
+import com.tfar.beesourceful.BetterJSONUtils;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
@@ -11,6 +12,7 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -21,11 +23,11 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
 
   public final ResourceLocation id;
   public final Ingredient ingredient;
-  public final List<ItemStack> outputs;
+  public final List<Pair<ItemStack,Double>> outputs;
   public final int time;
 
   public CentrifugeRecipe(ResourceLocation id,
-                          Ingredient ingredient, List<ItemStack> outputs, int time) {
+                          Ingredient ingredient, List<Pair<ItemStack,Double>> outputs, int time) {
     this.id = id;
     this.ingredient = ingredient;
     this.outputs = outputs;
@@ -36,8 +38,10 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
   public boolean matches(IInventory inventory, World world) {
     return ingredient.test(inventory.getStackInSlot(0));
   }
-
+  /** use CentrifugeRecipe#getCraftingResults instead*/
   @Override
+  @Nonnull
+  @Deprecated
   public ItemStack getCraftingResult(IInventory p_77572_1_) {
     return ItemStack.EMPTY;
   }
@@ -57,10 +61,11 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
    * Get the result of this recipe, usually for display purposes (e.g. recipe book). If your recipe has more than one
    * possible result (e.g. it's dynamic and depends on its inputs), then return an empty stack.
    */
+  @Deprecated
   @Override
   @Nonnull
   public ItemStack getRecipeOutput() {
-    return getCraftingResults().get(0);
+    return ItemStack.EMPTY;
   }
 
   @Override
@@ -78,7 +83,7 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
     return CentrifugeRecipeType.CENTRIFUGE;
   }
 
-  public List<ItemStack> getCraftingResults() {
+  public List<Pair<ItemStack,Double>> getCraftingResults() {
     return outputs;
   }
 
@@ -89,6 +94,7 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
       this.factory = p_i50146_1_;
     }
 
+    @Override
     public T read(ResourceLocation id, JsonObject json) {
       Ingredient ingredient;
       if (JSONUtils.isJsonArray(json, "ingredient")) {
@@ -98,11 +104,14 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
       }
 
       JsonArray jsonArray = JSONUtils.getJsonArray(json, "results");
-      List<ItemStack> outputs = new ArrayList<>();
+      List<Pair<ItemStack,Double>> outputs = new ArrayList<>();
       jsonArray.forEach(jsonElement -> {
-        String s = jsonElement.getAsString();
-        ItemStack stack = new ItemStack(Registry.ITEM.getOrDefault(new ResourceLocation(s)));
-        outputs.add(stack);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        String registryname = JSONUtils.getString(jsonObject,"item");
+        int count = JSONUtils.getInt(jsonObject,"count",1);
+        double chance = BetterJSONUtils.getDouble(jsonObject,"chance",1);
+        ItemStack stack = new ItemStack(Registry.ITEM.getOrDefault(new ResourceLocation(registryname)),count);
+        outputs.add(Pair.of(stack,chance));
       });
 
       int time = JSONUtils.getInt(json,"time");
@@ -112,8 +121,8 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
 
     public T read(ResourceLocation id, PacketBuffer buffer) {
       Ingredient ingredient = Ingredient.read(buffer);
-      List<ItemStack> outputs = new ArrayList<>();
-      IntStream.range(0,buffer.readInt()).forEach(i -> outputs.add(buffer.readItemStack()));
+      List<Pair<ItemStack,Double>> outputs = new ArrayList<>();
+      IntStream.range(0,buffer.readInt()).forEach(i -> outputs.add(Pair.of(buffer.readItemStack(),buffer.readDouble())));
       int time = buffer.readInt();
       return this.factory.create(id, ingredient, outputs,time);
     }
@@ -121,12 +130,15 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
     public void write(PacketBuffer buffer, T recipe) {
       recipe.ingredient.write(buffer);
       buffer.writeInt(recipe.outputs.size());
-      recipe.outputs.forEach(buffer::writeItemStack);
+      recipe.outputs.forEach(itemStackDoublePair -> {
+        buffer.writeItemStack(itemStackDoublePair.getLeft());
+        buffer.writeDouble(itemStackDoublePair.getRight());
+      });
       buffer.writeInt(recipe.time);
     }
 
     public interface IRecipeFactory<T extends CentrifugeRecipe> {
-      T create(ResourceLocation id, Ingredient input, List<ItemStack> stacks,int time);
+      T create(ResourceLocation id, Ingredient input, List<Pair<ItemStack,Double>> stacks,int time);
     }
   }
 }

@@ -64,15 +64,11 @@ public class CentrifugeContainer extends Container {
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
-      if (index == 0) {
-        if (!this.mergeItemStack(itemstack1, 2, inventorySlots.size(), true)) {
+      if (index <= 4) {
+        if (!this.mergeItemStack(itemstack1, 5, inventorySlots.size(), true)) {
           return ItemStack.EMPTY;
         }
-      } else if (index == 1) {
-        if (!this.mergeItemStack(itemstack1, 2, inventorySlots.size(), true)) {
-          return ItemStack.EMPTY;
-        }
-      } else if (!this.mergeItemStack(itemstack1, 0, 1, false)) {
+      } else if (!this.mergeItemStack(itemstack1, 0, 2, false)) {
         return ItemStack.EMPTY;
       }
 

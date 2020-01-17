@@ -366,6 +366,7 @@ public class BeeSourceful {
     public static final Item quartz_honeycomb = null;
     public static final Item lapis_honeycomb = null;
 
+    public static final Item beeswax = null;
 
     public static final Block
             iron_bee_nest = null,

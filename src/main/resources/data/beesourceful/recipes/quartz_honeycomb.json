@@ -1,11 +1,11 @@
 {
   "type": "beesourceful:centrifuge",
   "ingredient": {
-    "tag": "forge:honeycombs/diamond"
+    "tag": "forge:honeycombs/quartz"
   },
   "results": [
     {
-      "item": "minecraft:diamond"
+      "item": "minecraft:quartz"
     },
     {
       "item": "beesourceful:beeswax"

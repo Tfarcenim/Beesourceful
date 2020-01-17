@@ -162,7 +162,7 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
       for (int i = 0; i < honeycombs.size();i++){
         combs.putString(String.valueOf(i),honeycombs.get(i).getRegistryName().toString());
       }
-      combs.put("Honeycombs",combs);
+      nbt.put("Honeycombs",combs);
     }
     return nbt;
   }

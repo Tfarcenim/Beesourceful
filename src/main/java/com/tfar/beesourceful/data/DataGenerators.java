@@ -22,6 +22,7 @@ public class DataGenerators {
     if (e.includeServer()){
       gen.addProvider(new ModLootTableProvider(gen));
       gen.addProvider(new ModRecipeProvider(gen));
+      gen.addProvider(new ModItemTagsProvider(gen));
     }
   }
 }

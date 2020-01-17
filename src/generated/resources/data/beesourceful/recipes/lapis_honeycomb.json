@@ -1,11 +1,12 @@
 {
   "type": "beesourceful:centrifuge",
   "ingredient": {
-    "tag": "forge:honeycombs/diamond"
+    "tag": "forge:honeycombs/lapis"
   },
   "results": [
     {
-      "item": "minecraft:diamond"
+      "item": "minecraft:lapis_lazuli",
+      "count": 6
     },
     {
       "item": "beesourceful:beeswax"
