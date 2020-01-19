@@ -1,0 +1,15 @@
+{
+  "type": "beesourceful:centrifuge",
+  "ingredient": {
+    "tag": "forge:honeycombs/emerald"
+  },
+  "results": [
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "beesourceful:beeswax"
+    }
+  ],
+  "time": 200
+}

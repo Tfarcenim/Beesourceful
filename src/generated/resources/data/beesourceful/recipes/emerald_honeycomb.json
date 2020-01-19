@@ -1,15 +1,12 @@
 {
-  "type": "beesourceful:centrifuge",
-  "ingredient": {
-    "tag": "forge:honeycombs/emerald"
-  },
-  "results": [
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
     {
-      "item": "minecraft:emerald"
-    },
-    {
-      "item": "beesourceful:beeswax"
+      "item": "beesourceful:emerald_honeycomb_block"
     }
   ],
-  "time": 200
+  "result": {
+    "item": "beesourceful:emerald_honeycomb",
+    "count": 9
+  }
 }

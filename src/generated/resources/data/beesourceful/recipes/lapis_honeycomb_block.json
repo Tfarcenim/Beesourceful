@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "aaa",
+    "aaa",
+    "aaa"
+  ],
+  "key": {
+    "a": {
+      "item": "beesourceful:lapis_honeycomb"
+    }
+  },
+  "result": {
+    "item": "beesourceful:lapis_honeycomb_block"
+  }
+}

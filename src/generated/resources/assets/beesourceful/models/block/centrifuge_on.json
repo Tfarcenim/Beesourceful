@@ -1,0 +1,7 @@
+{
+  "parent": "block/orientable_vertical",
+  "textures": {
+    "front": "beesourceful:block/centrifuge_front_on",
+    "side": "beesourceful:block/centrifuge_side"
+  }
+}

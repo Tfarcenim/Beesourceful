@@ -1,9 +1,11 @@
 package com.tfar.beesourceful.data.provider;
 
 import com.tfar.beesourceful.BeeSourceful;
+import com.tfar.beesourceful.block.CentrifugeBlock;
 import com.tfar.beesourceful.block.IronBeehiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -18,6 +20,7 @@ public class ModBlockstateProvider extends BlockStateProvider {
   @Override
   protected void registerStatesAndModels() {
 
+    centrifuge();
     ironBeehive();
 
     BeeSourceful.RegistryEvents.blocks.stream().filter(IronBeehiveBlock.class::isInstance)
@@ -44,7 +47,7 @@ public class ModBlockstateProvider extends BlockStateProvider {
                       ConfiguredModel.builder().modelFile(modelHoney).build() : ConfiguredModel.builder().modelFile(model).build());
             });
 
-    BeeSourceful.RegistryEvents.blocks.stream().filter(block -> block.getRegistryName().getPath().contains("honeycombs"))
+    BeeSourceful.RegistryEvents.blocks.stream().filter(block -> block.getRegistryName().getPath().contains("honeycomb"))
             .forEach(block -> {
               String name = block.getRegistryName().getPath();
               ModelFile model = getBuilder(name)
@@ -54,6 +57,40 @@ public class ModBlockstateProvider extends BlockStateProvider {
             });
   }
 
+  protected void centrifuge(){
+    Block centrifuge = BeeSourceful.Objectholders.centrifuge;
+    String name = centrifuge.getRegistryName().getPath();
+    ModelFile model = getBuilder(name)
+            .parent(getExistingFile(mcLoc("block/orientable_vertical")))
+            .texture("front", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_front"))
+            .texture("side", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_side"));
+
+    ModelFile modelOn = getBuilder(name+"_on")
+            .parent(getExistingFile(mcLoc("block/orientable_vertical")))
+            .texture("front", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_front_on"))
+            .texture("side", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_side"));
+    getVariantBuilder(centrifuge).forAllStates(state -> {
+
+      Direction dir = state.get(CentrifugeBlock.PROPERTY_FACING);
+      int rotX = 0;
+      int rotY = 0;
+
+      switch (dir){
+        case EAST:rotX=90;rotY=90;break;
+        case WEST:rotX=90;rotY=270;break;
+        case SOUTH:rotX=90;rotY=180;break;
+        case NORTH:rotX=90;break;
+        case DOWN:rotX=180;break;
+        case UP:default:
+      }
+
+      return state.get(CentrifugeBlock.PROPERTY_ON) ?
+              ConfiguredModel.builder().modelFile(modelOn).rotationX(rotX).rotationY(rotY).build() :
+              ConfiguredModel.builder().modelFile(model).rotationX(rotX).rotationY(rotY).build();
+    });
+
+  }
+
   protected void ironBeehive() {
     ResourceLocation iron_block = mcLoc("block/iron_block");
     Block iron_beehive = BeeSourceful.Objectholders.iron_beehive;
@@ -61,7 +98,6 @@ public class ModBlockstateProvider extends BlockStateProvider {
     String nameHoney = iron_beehive.getRegistryName().getPath() + "_honey";
 
     ModelFile model = getBuilder(name)
-            .parent(getExistingFile(mcLoc("block/orientable_with_bottom")))
             .parent(getExistingFile(mcLoc("block/orientable_with_bottom")))
             .texture("particle", iron_block)
             .texture("bottom", iron_block)

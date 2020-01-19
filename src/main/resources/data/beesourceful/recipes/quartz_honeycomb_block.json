@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "aaa",
+    "aaa",
+    "aaa"
+  ],
+  "key": {
+    "a": {
+      "item": "beesourceful:quartz_honeycomb"
+    }
+  },
+  "result": {
+    "item": "beesourceful:quartz_honeycomb_block"
+  }
+}

@@ -1,15 +1,12 @@
 {
-  "type": "beesourceful:centrifuge",
-  "ingredient": {
-    "tag": "forge:honeycombs/quartz"
-  },
-  "results": [
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
     {
-      "item": "minecraft:quartz"
-    },
-    {
-      "item": "beesourceful:beeswax"
+      "item": "beesourceful:quartz_honeycomb_block"
     }
   ],
-  "time": 200
+  "result": {
+    "item": "beesourceful:quartz_honeycomb",
+    "count": 9
+  }
 }

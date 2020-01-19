@@ -1,5 +1,6 @@
 package com.tfar.beesourceful;
 
+import com.tfar.beesourceful.block.CentrifugeBlock;
 import com.tfar.beesourceful.inventory.AutomationSensitiveItemStackHandler;
 import com.tfar.beesourceful.recipe.CentrifugeRecipe;
 import com.tfar.beesourceful.recipe.CentrifugeRecipeType;
@@ -54,6 +55,7 @@ public class CentrifugeBlockEntity extends TileEntity implements ITickableTileEn
         CentrifugeRecipe irecipe = getRecipe();
         boolean valid = this.canProcess(irecipe);
         if (valid) {
+          world.setBlockState(pos,getBlockState().with(CentrifugeBlock.PROPERTY_ON,true));
           this.totalTime = this.getTime();
           ++this.time;
           if (this.time == this.totalTime) {
@@ -63,7 +65,10 @@ public class CentrifugeBlockEntity extends TileEntity implements ITickableTileEn
             dirty = true;
           }
         }
-      } else time = 0;
+      } else {
+        time = 0;
+        world.setBlockState(pos,getBlockState().with(CentrifugeBlock.PROPERTY_ON,false));
+      }
       if (dirty) {
         this.markDirty();
       }

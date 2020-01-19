@@ -1,15 +1,12 @@
 {
-  "type": "beesourceful:centrifuge",
-  "ingredient": {
-    "tag": "forge:honeycombs/diamond"
-  },
-  "results": [
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
     {
-      "item": "minecraft:diamond"
-    },
-    {
-      "item": "beesourceful:beeswax"
+      "item": "beesourceful:diamond_honeycomb_block"
     }
   ],
-  "time": 200
+  "result": {
+    "item": "beesourceful:diamond_honeycomb",
+    "count": 9
+  }
 }

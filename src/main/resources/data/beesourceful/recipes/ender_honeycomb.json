@@ -1,15 +1,12 @@
 {
-  "type": "beesourceful:centrifuge",
-  "ingredient": {
-    "tag": "forge:honeycombs/ender"
-  },
-  "results": [
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
     {
-      "item": "minecraft:ender_pearl"
-    },
-    {
-      "item": "beesourceful:beeswax"
+      "item": "beesourceful:ender_honeycomb_block"
     }
   ],
-  "time": 200
+  "result": {
+    "item": "beesourceful:ender_honeycomb",
+    "count": 9
+  }
 }

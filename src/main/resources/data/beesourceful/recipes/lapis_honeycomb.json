@@ -1,16 +1,12 @@
 {
-  "type": "beesourceful:centrifuge",
-  "ingredient": {
-    "tag": "forge:honeycombs/lapis"
-  },
-  "results": [
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
     {
-      "item": "minecraft:lapis_lazuli",
-      "count": 6
-    },
-    {
-      "item": "beesourceful:beeswax"
+      "item": "beesourceful:lapis_honeycomb_block"
     }
   ],
-  "time": 200
+  "result": {
+    "item": "beesourceful:lapis_honeycomb",
+    "count": 9
+  }
 }
