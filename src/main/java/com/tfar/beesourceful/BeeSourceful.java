@@ -203,6 +203,7 @@ public class BeeSourceful {
 
     public static final Set<Block> blocks = new HashSet<>();
     public static final Set<Item> items = new HashSet<>();
+    public static final Set<EntityType<?>> entities = new HashSet<>();
 
     @SubscribeEvent
     public static void block(final RegistryEvent.Register<Block> event) {
@@ -220,6 +221,68 @@ public class BeeSourceful {
     public static void item(final RegistryEvent.Register<Item> event) {
       Item.Properties properties = new Item.Properties().group(ItemGroup.BUILDING_BLOCKS);
       Item.Properties properties1 = new Item.Properties().group(ItemGroup.MATERIALS);
+      Item.Properties egg = new Item.Properties().group(ItemGroup.MISC);
+
+      EntityType<?> iron_bee = EntityType.Builder
+              .create(IronBeeEntity::new, EntityClassification.CREATURE)
+              .size(0.7F, 0.6F)
+              .build("iron_bee").setRegistryName("iron_bee");
+
+      EntityType<?> redstone_bee = EntityType.Builder
+                      .create(RedstoneBeeEntity::new, EntityClassification.CREATURE)
+                      .size(0.7F, 0.6F)
+                      .build("redstone_bee").setRegistryName("redstone_bee");
+      EntityType<?> gold_bee = EntityType.Builder
+
+                      .create(GoldBeeEntity::new, EntityClassification.CREATURE)
+                      .size(0.7F, 0.6F)
+                      .build("gold_bee").setRegistryName("gold_bee");
+      EntityType<?> emerald_bee = EntityType.Builder
+
+                      .create(EmeraldBeeEntity::new, EntityClassification.CREATURE)
+                      .size(0.7F, 0.6F)
+                      .build("emerald_bee").setRegistryName("emerald_bee");
+      EntityType<?> diamond_bee = EntityType.Builder
+
+                      .create(DiamondBeeEntity::new, EntityClassification.CREATURE)
+                      .size(0.7F, 0.6F)
+                      .build("diamond_bee").setRegistryName("diamond_bee");
+
+      EntityType<?> lapis_bee = EntityType.Builder
+                      .create(LapisBeeEntity::new, EntityClassification.CREATURE)
+                      .size(0.7F, 0.6F)
+                      .build("lapis_bee").setRegistryName("lapis_bee");
+
+      EntityType<?> quartz_bee = EntityType.Builder
+                      .create(QuartzBeeEntity::new, EntityClassification.CREATURE)
+                      .size(0.7F, 0.6F)
+                      .build("quartz_bee").setRegistryName("quartz_bee");
+
+      EntityType<?> ender_bee = EntityType.Builder
+                      .create(EnderBeeEntity::new, EntityClassification.CREATURE)
+                      .size(0.7F, 0.6F)
+                      .build("ender_bee").setRegistryName("ender_bee");
+
+      String s = "_spawn_egg";
+
+      register(new SpawnEggItem(iron_bee,6,6,egg),new ResourceLocation(iron_bee.getRegistryName()+s),event.getRegistry());
+      register(new SpawnEggItem(redstone_bee,6,6,egg),new ResourceLocation(redstone_bee.getRegistryName()+s),event.getRegistry());
+      register(new SpawnEggItem(gold_bee,6,6,egg),new ResourceLocation(gold_bee.getRegistryName()+s),event.getRegistry());
+      register(new SpawnEggItem(lapis_bee,6,6,egg),new ResourceLocation(lapis_bee.getRegistryName()+s),event.getRegistry());
+      register(new SpawnEggItem(emerald_bee,6,6,egg),new ResourceLocation(emerald_bee.getRegistryName()+s),event.getRegistry());
+      register(new SpawnEggItem(diamond_bee,6,6,egg),new ResourceLocation(diamond_bee.getRegistryName()+s),event.getRegistry());
+      register(new SpawnEggItem(quartz_bee,6,6,egg),new ResourceLocation(quartz_bee.getRegistryName()+s),event.getRegistry());
+      register(new SpawnEggItem(ender_bee,6,6,egg),new ResourceLocation(ender_bee.getRegistryName()+s),event.getRegistry());
+
+      entities.add(iron_bee);
+      entities.add(gold_bee);
+      entities.add(redstone_bee);
+      entities.add(diamond_bee);
+      entities.add(emerald_bee);
+      entities.add(quartz_bee);
+      entities.add(ender_bee);
+      entities.add(lapis_bee);
+
       for (Block block : blocks) {
         register(new BlockItem(block, properties), block.getRegistryName(), event.getRegistry());
       }
@@ -257,54 +320,7 @@ public class BeeSourceful {
 
     @SubscribeEvent
     public static void entity(final RegistryEvent.Register<EntityType<?>> event) {
-      register(
-              EntityType.Builder
-                      .create(IronBeeEntity::new, EntityClassification.CREATURE)
-                      .size(0.7F, 0.6F)
-                      .build("")
-              , "iron_bee", event.getRegistry());
-      register(
-              EntityType.Builder
-                      .create(RedstoneBeeEntity::new, EntityClassification.CREATURE)
-                      .size(0.7F, 0.6F)
-                      .build("")
-              , "redstone_bee", event.getRegistry());
-      register(
-              EntityType.Builder
-                      .create(GoldBeeEntity::new, EntityClassification.CREATURE)
-                      .size(0.7F, 0.6F)
-                      .build("")
-              , "gold_bee", event.getRegistry());
-      register(
-              EntityType.Builder
-                      .create(EmeraldBeeEntity::new, EntityClassification.CREATURE)
-                      .size(0.7F, 0.6F)
-                      .build("")
-              , "emerald_bee", event.getRegistry());
-      register(
-              EntityType.Builder
-                      .create(DiamondBeeEntity::new, EntityClassification.CREATURE)
-                      .size(0.7F, 0.6F)
-                      .build("")
-              , "diamond_bee", event.getRegistry());
-      register(
-              EntityType.Builder
-                      .create(LapisBeeEntity::new, EntityClassification.CREATURE)
-                      .size(0.7F, 0.6F)
-                      .build("")
-              , "lapis_bee", event.getRegistry());
-      register(
-              EntityType.Builder
-                      .create(QuartzBeeEntity::new, EntityClassification.CREATURE)
-                      .size(0.7F, 0.6F)
-                      .build("")
-              , "quartz_bee", event.getRegistry());
-      register(
-              EntityType.Builder
-                      .create(EnderBeeEntity::new, EntityClassification.CREATURE)
-                      .size(0.7F, 0.6F)
-                      .build("")
-              , "ender_bee", event.getRegistry());
+      entities.forEach(entityType -> registerNoSet(entityType,entityType.getRegistryName(),event.getRegistry()));
     }
 
     @SubscribeEvent
@@ -335,6 +351,12 @@ public class BeeSourceful {
 
     private static <T extends IForgeRegistryEntry<T>> void register(T obj, ResourceLocation name, IForgeRegistry<T> registry) {
       registry.register(obj.setRegistryName(name));
+      if (obj instanceof Block) blocks.add((Block) obj);
+      if (obj instanceof Item) items.add((Item) obj);
+    }
+
+    private static <T extends IForgeRegistryEntry<T>> void registerNoSet(T obj, ResourceLocation name, IForgeRegistry<T> registry) {
+      registry.register(obj);
       if (obj instanceof Block) blocks.add((Block) obj);
       if (obj instanceof Item) items.add((Item) obj);
     }
