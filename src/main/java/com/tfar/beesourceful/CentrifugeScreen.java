@@ -38,6 +38,8 @@ public class CentrifugeScreen extends ContainerScreen<CentrifugeContainer> {
 
   @Override
   protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    this.font.drawString(this.title.getFormattedText(), 40, 5, 0x404040);
+    int size = font.getStringWidth(title.getFormattedText());
+    int start = (this.xSize - size)/2;
+    this.font.drawString(this.title.getFormattedText(), start, 5, 0x404040);
   }
 }

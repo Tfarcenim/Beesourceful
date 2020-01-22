@@ -25,6 +25,7 @@
   "entity.beesourceful.lapis_bee": "Lapis Bee",
   "entity.beesourceful.quartz_bee": "Quartz Bee",
   "entity.beesourceful.redstone_bee": "Redstone Bee",
+  "gui.beesourceful.category.centrifuge": "Centrifuge",
   "item.beesourceful.beeswax": "Beeswax",
   "item.beesourceful.diamond_bee_spawn_egg": "Diamond Bee Spawn Egg",
   "item.beesourceful.diamond_honeycomb": "Diamond Honeycomb",

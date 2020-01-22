@@ -6,6 +6,7 @@ import com.tfar.beesourceful.block.IronBeehiveBlock;
 import com.tfar.beesourceful.entity.*;
 import com.tfar.beesourceful.feature.OreBeeNestFeature;
 import com.tfar.beesourceful.recipe.CentrifugeRecipe;
+import com.tfar.beesourceful.util.BeeType;
 import net.minecraft.block.*;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
