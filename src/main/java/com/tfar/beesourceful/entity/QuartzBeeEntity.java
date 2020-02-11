@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.function.Predicate;
@@ -22,6 +23,11 @@ public class QuartzBeeEntity extends IronBeeEntity {
 
   public Block getOre(){
     return Blocks.NETHER_QUARTZ_ORE;
+  }
+
+  @Override
+  public boolean validFillerBlock(Block block) {
+    return block.isIn(Tags.Blocks.NETHERRACK);
   }
 
   public Block getAllowedHive() {

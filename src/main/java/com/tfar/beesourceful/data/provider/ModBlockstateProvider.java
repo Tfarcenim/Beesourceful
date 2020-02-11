@@ -27,8 +27,8 @@ public class ModBlockstateProvider extends BlockStateProvider {
             .filter(block -> block != BeeSourceful.Objectholders.iron_beehive)
             .forEach(block -> {
               String name = block.getRegistryName().getPath();
-              ModelFile model = getBuilder(name)
-                      .parent(getExistingFile(mcLoc("block/orientable_with_bottom")))
+              ModelFile model = models().getBuilder(name)
+                      .parent(models().getExistingFile(mcLoc("block/orientable_with_bottom")))
                       .texture("particle", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_side"))
                       .texture("bottom", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_bottom"))
                       .texture("top", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_top"))
@@ -36,8 +36,8 @@ public class ModBlockstateProvider extends BlockStateProvider {
                       .texture("side", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_side"));
 
               String nameHoney = block.getRegistryName().getPath() + "_honey";
-              ModelFile modelHoney = getBuilder(nameHoney)
-                      .parent(getExistingFile(mcLoc("block/orientable_with_bottom")))
+              ModelFile modelHoney = models().getBuilder(nameHoney)
+                      .parent(models().getExistingFile(mcLoc("block/orientable_with_bottom")))
                       .texture("particle", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_side"))
                       .texture("bottom", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_bottom"))
                       .texture("top", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_top"))
@@ -50,8 +50,8 @@ public class ModBlockstateProvider extends BlockStateProvider {
     BeeSourceful.RegistryEvents.blocks.stream().filter(block -> block.getRegistryName().getPath().contains("honeycomb"))
             .forEach(block -> {
               String name = block.getRegistryName().getPath();
-              ModelFile model = getBuilder(name)
-                      .parent(getExistingFile(mcLoc("block/cube_all")))
+              ModelFile model = models().getBuilder(name)
+                      .parent(models().getExistingFile(mcLoc("block/cube_all")))
                       .texture("all", new ResourceLocation(BeeSourceful.MODID, "block/" + name));
               getVariantBuilder(block).forAllStates(state -> ConfiguredModel.builder().modelFile(model).build());
             });
@@ -60,13 +60,13 @@ public class ModBlockstateProvider extends BlockStateProvider {
   protected void centrifuge(){
     Block centrifuge = BeeSourceful.Objectholders.centrifuge;
     String name = centrifuge.getRegistryName().getPath();
-    ModelFile model = getBuilder(name)
-            .parent(getExistingFile(mcLoc("block/orientable_vertical")))
+    ModelFile model = models().getBuilder(name)
+            .parent(models().getExistingFile(mcLoc("block/orientable_vertical")))
             .texture("front", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_front"))
             .texture("side", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_side"));
 
-    ModelFile modelOn = getBuilder(name+"_on")
-            .parent(getExistingFile(mcLoc("block/orientable_vertical")))
+    ModelFile modelOn = models().getBuilder(name+"_on")
+            .parent(models().getExistingFile(mcLoc("block/orientable_vertical")))
             .texture("front", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_front_on"))
             .texture("side", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_side"));
     getVariantBuilder(centrifuge).forAllStates(state -> {
@@ -97,16 +97,16 @@ public class ModBlockstateProvider extends BlockStateProvider {
     String name = iron_beehive.getRegistryName().getPath();
     String nameHoney = iron_beehive.getRegistryName().getPath() + "_honey";
 
-    ModelFile model = getBuilder(name)
-            .parent(getExistingFile(mcLoc("block/orientable_with_bottom")))
+    ModelFile model = models().getBuilder(name)
+            .parent(models().getExistingFile(mcLoc("block/orientable_with_bottom")))
             .texture("particle", iron_block)
             .texture("bottom", iron_block)
             .texture("top", iron_block)
             .texture("front", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_front"))
             .texture("side", new ResourceLocation(BeeSourceful.MODID, "block/" + name + "_side"));
 
-    ModelFile modelHoney = getBuilder(nameHoney)
-            .parent(getExistingFile(mcLoc("block/orientable_with_bottom")))
+    ModelFile modelHoney = models().getBuilder(nameHoney)
+            .parent(models().getExistingFile(mcLoc("block/orientable_with_bottom")))
             .texture("particle", iron_block)
             .texture("bottom", iron_block)
             .texture("top", iron_block)

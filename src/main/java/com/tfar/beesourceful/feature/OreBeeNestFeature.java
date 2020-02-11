@@ -1,6 +1,8 @@
 package com.tfar.beesourceful.feature;
 
 import com.mojang.datafixers.Dynamic;
+import com.tfar.beesourceful.ModConfigs;
+import com.tfar.beesourceful.util.BeeType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.IronBeeEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,27 +22,27 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class OreBeeNestFeature extends Feature<ReplaceBlockConfig> {
-  public final EntityType<? extends IronBeeEntity> bee;
-  public OreBeeNestFeature(Function<Dynamic<?>, ? extends ReplaceBlockConfig> p_i49878_1_, EntityType<? extends IronBeeEntity> bee) {
+  public final BeeType beeType;
+  public OreBeeNestFeature(Function<Dynamic<?>, ? extends ReplaceBlockConfig> p_i49878_1_, BeeType beeType) {
     super(p_i49878_1_);
-    this.bee = bee;
+    this.beeType = beeType;
   }
 
   @Override
   public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> p_212245_2_, Random rand, BlockPos pos, ReplaceBlockConfig config) {
+    //if (!ModConfigs.enable_hives.get(beeType).get())return false;
     if (world.getBlockState(pos).getBlock() == config.target.getBlock() && hasSpace(world,pos)) {
       world.setBlockState(pos, config.state, 2);
       TileEntity blockEntity = world.getTileEntity(pos);
       if (blockEntity instanceof IronBeehiveBlockEntity){
         IronBeehiveBlockEntity nest = (IronBeehiveBlockEntity)blockEntity;
         for (int i = 0;i < 4;i++) {
-          IronBeeEntity ironBeeEntity = bee.create(world.getWorld());
+          IronBeeEntity ironBeeEntity = beeType.beeSupplier.get().create(world.getWorld());
           CompoundNBT compoundnbt = new CompoundNBT();
           ironBeeEntity.writeUnlessPassenger(compoundnbt);
           IronBeehiveBlockEntity.Bee2 beehivetileentity$bee = new IronBeehiveBlockEntity.Bee2(compoundnbt, 0, 2400);
           nest.bees.add(beehivetileentity$bee);
         }
-        System.out.println(bee.getRegistryName().getPath() + pos.toString());
       }
     }
     return true;

@@ -5,7 +5,7 @@ import net.minecraft.tags.ItemTags.Wrapper;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 
-public class ItemTagList {
+public class Tags {
   public static final Tag<Item> IRON_HONEYCOMBS = new Wrapper(new ResourceLocation("forge","honeycombs/iron"));
   public static final Tag<Item> GOLD_HONEYCOMBS = new Wrapper(new ResourceLocation("forge","honeycombs/gold"));
   public static final Tag<Item> REDSTONE_HONEYCOMBS = new Wrapper(new ResourceLocation("forge","honeycombs/redstone"));

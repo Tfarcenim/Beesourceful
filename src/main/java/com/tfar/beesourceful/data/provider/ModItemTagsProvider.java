@@ -1,7 +1,7 @@
 package com.tfar.beesourceful.data.provider;
 
 import com.tfar.beesourceful.BeeSourceful;
-import com.tfar.beesourceful.ItemTagList;
+import com.tfar.beesourceful.Tags;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
 
@@ -12,13 +12,13 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
   @Override
   protected void registerTags() {
-    getBuilder(ItemTagList.IRON_HONEYCOMBS).add(BeeSourceful.Objectholders.iron_honeycomb);
-    getBuilder(ItemTagList.GOLD_HONEYCOMBS).add(BeeSourceful.Objectholders.gold_honeycomb);
-    getBuilder(ItemTagList.REDSTONE_HONEYCOMBS).add(BeeSourceful.Objectholders.redstone_honeycomb);
-    getBuilder(ItemTagList.DIAMOND_HONEYCOMBS).add(BeeSourceful.Objectholders.diamond_honeycomb);
-    getBuilder(ItemTagList.EMERALD_HONEYCOMBS).add(BeeSourceful.Objectholders.emerald_honeycomb);
-    getBuilder(ItemTagList.LAPIS_HONEYCOMBS).add(BeeSourceful.Objectholders.lapis_honeycomb);
-    getBuilder(ItemTagList.QUARTZ_HONEYCOMBS).add(BeeSourceful.Objectholders.quartz_honeycomb);
-    getBuilder(ItemTagList.ENDER_HONEYCOMBS).add(BeeSourceful.Objectholders.ender_honeycomb);
+    getBuilder(Tags.IRON_HONEYCOMBS).add(BeeSourceful.Objectholders.iron_honeycomb);
+    getBuilder(Tags.GOLD_HONEYCOMBS).add(BeeSourceful.Objectholders.gold_honeycomb);
+    getBuilder(Tags.REDSTONE_HONEYCOMBS).add(BeeSourceful.Objectholders.redstone_honeycomb);
+    getBuilder(Tags.DIAMOND_HONEYCOMBS).add(BeeSourceful.Objectholders.diamond_honeycomb);
+    getBuilder(Tags.EMERALD_HONEYCOMBS).add(BeeSourceful.Objectholders.emerald_honeycomb);
+    getBuilder(Tags.LAPIS_HONEYCOMBS).add(BeeSourceful.Objectholders.lapis_honeycomb);
+    getBuilder(Tags.QUARTZ_HONEYCOMBS).add(BeeSourceful.Objectholders.quartz_honeycomb);
+    getBuilder(Tags.ENDER_HONEYCOMBS).add(BeeSourceful.Objectholders.ender_honeycomb);
   }
 }

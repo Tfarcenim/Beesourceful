@@ -1,4 +1,4 @@
-package com.tfar.beesourceful;
+package com.tfar.beesourceful.util;
 
 import net.minecraft.world.gen.placement.CountRangeConfig;
 

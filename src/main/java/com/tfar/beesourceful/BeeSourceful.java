@@ -7,7 +7,11 @@ import com.tfar.beesourceful.entity.*;
 import com.tfar.beesourceful.feature.OreBeeNestFeature;
 import com.tfar.beesourceful.recipe.CentrifugeRecipe;
 import com.tfar.beesourceful.util.BeeType;
+import com.tfar.beesourceful.util.ConfigurableCountRange;
+import com.tfar.beesourceful.util.ConfigurableCountRangeConfig;
+import com.tfar.beesourceful.util.CountRangeConfigWrapper;
 import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.dispenser.IBlockSource;
@@ -36,14 +40,17 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.ReplaceBlockConfig;
+import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -53,6 +60,8 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.*;
+
+import static com.tfar.beesourceful.ModConfigs.SERVER_SPEC;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(BeeSourceful.MODID)
@@ -65,7 +74,11 @@ public class BeeSourceful {
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     // Register the doClientStuff method for modloading
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
   }
+
+  public static final Placement<ConfigurableCountRangeConfig>
+          place = new ConfigurableCountRange(ConfigurableCountRangeConfig::deserialize);
 
   private void setup(final FMLCommonSetupEvent event) {
 
@@ -208,14 +221,14 @@ public class BeeSourceful {
 
     @SubscribeEvent
     public static void block(final RegistryEvent.Register<Block> event) {
-      Block.Properties properties = Block.Properties.from(Blocks.field_226906_mb_);
+      Block.Properties irohbeehive = Block.Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL);
       Block.Properties honeycomb = Block.Properties.from(Blocks.field_226908_md_);
-      register(new IronBeehiveBlock(properties), "iron_beehive", event.getRegistry());
+      register(new IronBeehiveBlock(irohbeehive), "iron_beehive", event.getRegistry());
       for (BeeType beeType : BeeType.values()) {
-        register(new IronBeehiveBlock(properties), beeType + "_bee_nest", event.getRegistry());
+        register(new IronBeehiveBlock(irohbeehive), beeType + "_bee_nest", event.getRegistry());
         register(new Block(honeycomb), beeType + "_honeycomb_block", event.getRegistry());
       }
-      register(new CentrifugeBlock(properties), "centrifuge", event.getRegistry());
+      register(new CentrifugeBlock(irohbeehive), "centrifuge", event.getRegistry());
     }
 
     @SubscribeEvent
@@ -255,7 +268,7 @@ public class BeeSourceful {
                       .build("lapis_bee").setRegistryName("lapis_bee");
 
       EntityType<?> quartz_bee = EntityType.Builder
-                      .create(QuartzBeeEntity::new, EntityClassification.CREATURE)
+                      .create(QuartzBeeEntity::new, EntityClassification.CREATURE).immuneToFire()
                       .size(0.7F, 0.6F)
                       .build("quartz_bee").setRegistryName("quartz_bee");
 
@@ -342,7 +355,7 @@ public class BeeSourceful {
     @SubscribeEvent
     public static void feature(final RegistryEvent.Register<Feature<?>> event) {
       for (BeeType beeType : BeeType.values()) {
-        register(new OreBeeNestFeature(ReplaceBlockConfig::deserialize, (EntityType<? extends IronBeeEntity>) ForgeRegistries.ENTITIES.getValue(new ResourceLocation(MODID, beeType + "_bee"))), beeType + "_bee_nest", event.getRegistry());
+        register(new OreBeeNestFeature(ReplaceBlockConfig::deserialize, beeType), beeType + "_bee_nest", event.getRegistry());
       }
     }
 

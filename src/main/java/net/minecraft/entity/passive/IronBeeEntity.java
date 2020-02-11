@@ -116,13 +116,17 @@ public class IronBeeEntity extends BeeEntity {
         BlockPos beePosDown = (new BlockPos(IronBeeEntity.this)).down(i);
         BlockState state = world.getBlockState(beePosDown);
         Block block = state.getBlock();
-        if (block.isIn(Tags.Blocks.STONE)) {
+        if (validFillerBlock(block)) {
           world.playEvent(2005, beePosDown, 0);
           world.setBlockState(beePosDown, getOre().getDefaultState());
           addCropCounter();
         }
       }
     }
+  }
+
+  public boolean validFillerBlock(Block block){
+    return block.isIn(Tags.Blocks.STONE);
   }
 
   public class FindBeehiveGoal2 extends BeeEntity.FindBeehiveGoal {
@@ -150,7 +154,9 @@ public class IronBeeEntity extends BeeEntity {
     }
   }
 
-  protected final Predicate<BlockState> flowerPredicate = state -> state.isIn(BlockTags.field_226148_H_) ? state.getBlock() != Blocks.SUNFLOWER || state.get(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER : state.isIn(BlockTags.SMALL_FLOWERS);
+  protected final Predicate<BlockState> flowerPredicate = state ->
+          state.isIn(BlockTags.field_226148_H_) ? state.getBlock() != Blocks.SUNFLOWER
+                  || state.get(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER : state.isIn(BlockTags.SMALL_FLOWERS);
 
   public Predicate<BlockState> getFlowerPredicate(){
     return flowerPredicate;
