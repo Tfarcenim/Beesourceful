@@ -21,6 +21,8 @@ import java.util.stream.IntStream;
 
 public class CentrifugeRecipe implements IRecipe<IInventory> {
 
+  public static final IRecipeType<CentrifugeRecipe> CENTRIFUGE = IRecipeType.register("beesourceful:centrifuge");
+
   public final ResourceLocation id;
   public final Ingredient ingredient;
   public final List<Pair<ItemStack,Double>> outputs;
@@ -80,7 +82,7 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
 
   @Override
   public IRecipeType<?> getType() {
-    return CentrifugeRecipeType.CENTRIFUGE;
+    return CENTRIFUGE;
   }
 
   public List<Pair<ItemStack,Double>> getCraftingResults() {

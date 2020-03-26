@@ -2,7 +2,6 @@ package com.tfar.beesourceful.jei;
 
 import com.tfar.beesourceful.BeeSourceful;
 import com.tfar.beesourceful.recipe.CentrifugeRecipe;
-import com.tfar.beesourceful.recipe.CentrifugeRecipeType;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -43,7 +42,7 @@ public class JeiCompat implements IModPlugin {
   @Override
   public void registerRecipes(IRecipeRegistration registration) {
     RecipeManager recipeManager = Minecraft.getInstance().world.getRecipeManager();
-    Collection<CentrifugeRecipe> recipes = getRecipes(recipeManager, CentrifugeRecipeType.CENTRIFUGE);
+    Collection<CentrifugeRecipe> recipes = getRecipes(recipeManager, CentrifugeRecipe.CENTRIFUGE);
     registration.addRecipes(recipes,new ResourceLocation(BeeSourceful.MODID,"centrifuge"));
   }
 
