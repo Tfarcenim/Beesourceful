@@ -4,12 +4,10 @@ import com.google.common.collect.Sets;
 import com.tfar.beesourceful.block.CentrifugeBlock;
 import com.tfar.beesourceful.block.IronBeehiveBlock;
 import com.tfar.beesourceful.entity.*;
-import com.tfar.beesourceful.feature.OreBeeNestFeature;
 import com.tfar.beesourceful.recipe.CentrifugeRecipe;
 import com.tfar.beesourceful.util.BeeType;
 import com.tfar.beesourceful.util.ConfigurableCountRange;
 import com.tfar.beesourceful.util.ConfigurableCountRangeConfig;
-import com.tfar.beesourceful.util.CountRangeConfigWrapper;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.ScreenManager;
@@ -36,11 +34,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.ReplaceBlockConfig;
-import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.IShearable;
@@ -77,8 +71,7 @@ public class BeeSourceful {
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
   }
 
-  public static final Placement<ConfigurableCountRangeConfig>
-          place = new ConfigurableCountRange(ConfigurableCountRangeConfig::deserialize);
+  public static final Placement<ConfigurableCountRangeConfig> CONFIGURABLE_COUNT_RANGE = new ConfigurableCountRange(ConfigurableCountRangeConfig::deserialize);
 
   private void setup(final FMLCommonSetupEvent event) {
 
@@ -91,121 +84,77 @@ public class BeeSourceful {
     PointOfInterestType.field_221073_u.putAll(pointOfInterestTypeMap);
 
     ForgeRegistries.BIOMES.forEach(biome -> {
-      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.iron_bee_nest
-              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
-                      Objectholders.iron_bee_nest.getDefaultState()
-              )).createDecoratedFeature(Placement.COUNT_RANGE.
-                      configure(new CountRangeConfigWrapper(5, 0, 64))));
-
-      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.redstone_bee_nest
-              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
-                      Objectholders.redstone_bee_nest.getDefaultState()
-              )).createDecoratedFeature(Placement.COUNT_RANGE.
-                      configure(new CountRangeConfigWrapper(5, 0, 16))));
-
-      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.gold_bee_nest
-              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
-                      Objectholders.redstone_bee_nest.getDefaultState()
-              )).createDecoratedFeature(Placement.COUNT_RANGE.
-                      configure(new CountRangeConfigWrapper(3, 0, 32))));
-
-      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.diamond_bee_nest
-              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
-                      Objectholders.diamond_bee_nest.getDefaultState()
-              )).createDecoratedFeature(Placement.COUNT_RANGE.
-                      configure(new CountRangeConfigWrapper(4, 0, 16))));
-
-      biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.lapis_bee_nest
-              .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
-                      Objectholders.lapis_bee_nest.getDefaultState()
-              )).createDecoratedFeature(Placement.COUNT_RANGE.
-                      configure(new CountRangeConfigWrapper(4, 0, 32))));
-
-      if (biome.getCategory() == Biome.Category.EXTREME_HILLS)
-        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES,
-                Objectholders.Features.emerald_bee_nest
-                        .configure(new ReplaceBlockConfig(Blocks.STONE.getDefaultState(),
-                                Objectholders.emerald_bee_nest.getDefaultState()
-                        )).createDecoratedFeature(Placement.COUNT_RANGE.
-                        configure(new CountRangeConfigWrapper(5, 0, 16))));
-
-      biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Objectholders.Features.ender_bee_nest
-              .configure(new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(),
-                      Objectholders.ender_bee_nest.getDefaultState()
-              )).createDecoratedFeature(Placement.COUNT_RANGE.
-                      configure(new CountRangeConfigWrapper(20, 0, 80))));
-
-      if (biome.getCategory() == Biome.Category.NETHER) biome.
-              addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Objectholders.Features.quartz_bee_nest
-                      .configure(new ReplaceBlockConfig(Blocks.NETHERRACK.getDefaultState(),
-                              Objectholders.quartz_bee_nest.getDefaultState()
-                      )).createDecoratedFeature(Placement.COUNT_RANGE.
-                              configure(new CountRangeConfigWrapper(5, 0, 128))));
-    });
-
-    DispenserBlock.registerDispenseBehavior(Items.SHEARS.asItem(), new OptionalDispenseBehavior() {
-      /**
-       * Dispense the specified stack, play the dispense sound and spawn particles.
-       */
-      @SuppressWarnings("deprecation")
-      protected ItemStack dispenseStack(IBlockSource p_82487_1_, ItemStack stack) {
-        World world = p_82487_1_.getWorld();
-        if (!world.isRemote()) {
-          this.successful = false;
-          BlockPos blockpos = p_82487_1_.getBlockPos().offset(p_82487_1_.getBlockState().get(DispenserBlock.FACING));
-
-          for (Entity entity : world.getEntitiesInAABBexcluding(null, new AxisAlignedBB(blockpos), e -> !e.isSpectator() && e instanceof IShearable)) {
-            IShearable target = (IShearable) entity;
-            if (target.isShearable(stack, world, blockpos)) {
-              List<ItemStack> drops = target.onSheared(stack, entity.world, blockpos,
-                      EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack));
-              Random rand = new Random();
-              drops.forEach(d -> {
-                ItemEntity ent = entity.entityDropItem(d, 1.0F);
-                ent.setMotion(ent.getMotion().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
+              Arrays.stream(BeeType.VALUES).forEach(beeType -> {
+                if (beeType.allowed_biomes.test(biome))
+                  biome.addFeature(beeType.generation_stage,
+                          beeType.feature.configure(new ReplaceBlockConfig(beeType.replace_block,
+                                          beeType.beehive.get().getDefaultState().with(IronBeehiveBlock.TICK,false)
+                                  )).createDecoratedFeature(CONFIGURABLE_COUNT_RANGE.
+                                  configure(new ConfigurableCountRangeConfig(beeType))));
               });
-              if (stack.attemptDamageItem(1, world.rand, null)) {
-                stack.setCount(0);
-              }
+            });
 
-              this.successful = true;
-              break;
-            }
-          }
+      DispenserBlock.registerDispenseBehavior(Items.SHEARS.asItem(), new OptionalDispenseBehavior() {
+        /**
+         * Dispense the specified stack, play the dispense sound and spawn particles.
+         */
+        @SuppressWarnings("deprecation")
+        protected ItemStack dispenseStack(IBlockSource p_82487_1_, ItemStack stack) {
+          World world = p_82487_1_.getWorld();
+          if (!world.isRemote()) {
+            this.successful = false;
+            BlockPos blockpos = p_82487_1_.getBlockPos().offset(p_82487_1_.getBlockState().get(DispenserBlock.FACING));
 
-          if (!this.successful) {
-            BlockState blockstate = world.getBlockState(blockpos);
-            if (blockstate.isIn(BlockTags.field_226151_aa_)) {
-              int i = blockstate.get(BeehiveBlock.HONEY_LEVEL);
-              if (i >= 5) {
+            for (Entity entity : world.getEntitiesInAABBexcluding(null, new AxisAlignedBB(blockpos), e -> !e.isSpectator() && e instanceof IShearable)) {
+              IShearable target = (IShearable) entity;
+              if (target.isShearable(stack, world, blockpos)) {
+                List<ItemStack> drops = target.onSheared(stack, entity.world, blockpos,
+                        EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack));
+                Random rand = new Random();
+                drops.forEach(d -> {
+                  ItemEntity ent = entity.entityDropItem(d, 1.0F);
+                  ent.setMotion(ent.getMotion().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
+                });
                 if (stack.attemptDamageItem(1, world.rand, null)) {
                   stack.setCount(0);
                 }
 
-                BeehiveBlock.dropHoneycomb(world, blockpos);
-                ((BeehiveBlock) blockstate.getBlock()).takeHoney(world, blockstate, blockpos, null, BeehiveTileEntity.State.BEE_RELEASED);
                 this.successful = true;
+                break;
               }
-            } else if (blockstate.getBlock() instanceof IronBeehiveBlock) {
-              int i = blockstate.get(BeehiveBlock.HONEY_LEVEL);
-              if (i >= 5) {
-                if (stack.attemptDamageItem(1, world.rand, null)) {
-                  stack.setCount(0);
-                }
+            }
 
-                IronBeehiveBlock.dropResourceHoneyComb((IronBeehiveBlock) blockstate.getBlock(), world, blockpos);
-                ((BeehiveBlock) blockstate.getBlock()).takeHoney(world, blockstate, blockpos, null,
-                        BeehiveTileEntity.State.BEE_RELEASED);
-                this.successful = true;
+            if (!this.successful) {
+              BlockState blockstate = world.getBlockState(blockpos);
+              if (blockstate.isIn(BlockTags.field_226151_aa_)) {
+                int i = blockstate.get(BeehiveBlock.HONEY_LEVEL);
+                if (i >= 5) {
+                  if (stack.attemptDamageItem(1, world.rand, null)) {
+                    stack.setCount(0);
+                  }
+
+                  BeehiveBlock.dropHoneycomb(world, blockpos);
+                  ((BeehiveBlock) blockstate.getBlock()).takeHoney(world, blockstate, blockpos, null, BeehiveTileEntity.State.BEE_RELEASED);
+                  this.successful = true;
+                }
+              } else if (blockstate.getBlock() instanceof IronBeehiveBlock) {
+                int i = blockstate.get(BeehiveBlock.HONEY_LEVEL);
+                if (i >= 5) {
+                  if (stack.attemptDamageItem(1, world.rand, null)) {
+                    stack.setCount(0);
+                  }
+
+                  IronBeehiveBlock.dropResourceHoneyComb((IronBeehiveBlock) blockstate.getBlock(), world, blockpos);
+                  ((BeehiveBlock) blockstate.getBlock()).takeHoney(world, blockstate, blockpos, null,
+                          BeehiveTileEntity.State.BEE_RELEASED);
+                  this.successful = true;
+                }
               }
             }
           }
+          return stack;
         }
-        return stack;
-      }
-    });
-
-
+      });
   }
 
   private void doClientStuff(final FMLClientSetupEvent event) {
@@ -352,13 +301,6 @@ public class BeeSourceful {
       }
     }
 
-    @SubscribeEvent
-    public static void feature(final RegistryEvent.Register<Feature<?>> event) {
-      for (BeeType beeType : BeeType.values()) {
-        register(new OreBeeNestFeature(ReplaceBlockConfig::deserialize, beeType), beeType + "_bee_nest", event.getRegistry());
-      }
-    }
-
     private static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {
       register(obj, new ResourceLocation(MODID, name), registry);
     }
@@ -451,18 +393,6 @@ public class BeeSourceful {
       public static final IRecipeSerializer<CentrifugeRecipe> centrifuge = null;
     }
 
-    @ObjectHolder(MODID)
-    public static class Features {
-      public static final Feature<ReplaceBlockConfig> iron_bee_nest = null;
-      public static final Feature<ReplaceBlockConfig> redstone_bee_nest = null;
-      public static final Feature<ReplaceBlockConfig> gold_bee_nest = null;
-      public static final Feature<ReplaceBlockConfig> ender_bee_nest = null;
-      public static final Feature<ReplaceBlockConfig> diamond_bee_nest = null;
-      public static final Feature<ReplaceBlockConfig> emerald_bee_nest = null;
-      public static final Feature<ReplaceBlockConfig> quartz_bee_nest = null;
-      public static final Feature<ReplaceBlockConfig> lapis_bee_nest = null;
-
-    }
     @ObjectHolder(MODID)
     public static class Containers {
       public static final ContainerType<CentrifugeContainer> centrifuge = null;

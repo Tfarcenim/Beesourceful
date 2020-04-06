@@ -3,7 +3,6 @@ package com.tfar.beesourceful;
 import com.tfar.beesourceful.block.CentrifugeBlock;
 import com.tfar.beesourceful.inventory.AutomationSensitiveItemStackHandler;
 import com.tfar.beesourceful.recipe.CentrifugeRecipe;
-import com.tfar.beesourceful.recipe.CentrifugeRecipeType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -151,7 +150,7 @@ public class CentrifugeBlockEntity extends TileEntity implements ITickableTileEn
     if (recipe != null && recipe.matches(new RecipeWrapper(h), world)) return recipe;
     else {
       CentrifugeRecipe rec = world.getRecipeManager().
-              getRecipe(CentrifugeRecipeType.CENTRIFUGE, new RecipeWrapper(h), this.world).orElse(null);
+              getRecipe(CentrifugeRecipe.CENTRIFUGE, new RecipeWrapper(h), this.world).orElse(null);
       if (rec == null) failedMatch = input;
       else failedMatch = ItemStack.EMPTY;
       return recipe = rec;

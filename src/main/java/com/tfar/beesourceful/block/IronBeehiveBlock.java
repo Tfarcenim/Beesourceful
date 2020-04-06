@@ -1,5 +1,8 @@
 package com.tfar.beesourceful.block;
 
+import net.minecraft.block.Block;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.IronBeehiveBlockEntity;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BeehiveBlock;
@@ -27,9 +30,14 @@ import java.util.List;
 
 public class IronBeehiveBlock extends BeehiveBlock {
 
+  public static final BooleanProperty TICK = BooleanProperty.create("tick");
+
   public IronBeehiveBlock(Properties p_i225756_1_) {
     super(p_i225756_1_);
+    setDefaultState(getDefaultState().with(TICK,true));
   }
+
+
 
   @Nullable
   @Override
@@ -92,6 +100,12 @@ public class IronBeehiveBlock extends BeehiveBlock {
         }
       }
     }
+  }
+
+  @Override
+  protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    super.fillStateContainer(builder);
+    builder.add(TICK);
   }
 
   private boolean hasBees(World p_226882_1_, BlockPos p_226882_2_) {

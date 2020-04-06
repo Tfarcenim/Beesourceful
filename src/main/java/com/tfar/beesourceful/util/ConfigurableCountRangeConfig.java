@@ -3,29 +3,22 @@ package com.tfar.beesourceful.util;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.DynamicOps;
-import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.IPlacementConfig;
 
 public class ConfigurableCountRangeConfig implements IPlacementConfig {
 
-  private final BeeType beeType;
-  private final ConfigHolder configHolder;
+  final BeeType beeType;
 
-  public ConfigurableCountRangeConfig(BeeType beeType,ConfigHolder configHolder) {
+  public ConfigurableCountRangeConfig(BeeType beeType) {
     this.beeType = beeType;
-
-    this.configHolder = configHolder;
   }
 
   public <T> Dynamic<T> serialize(DynamicOps<T> ops) {
-    return null;
+    return new Dynamic<>(ops, ops.createMap(ImmutableMap.of(ops.createString("bee_type"),ops.createString(beeType.toString()))));
   }
 
-  public static ConfigurableCountRangeConfig deserialize(Dynamic<?> p_214733_0_) {
-    return null;
-  }
-
-  public ConfigHolder getConfigHolder() {
-    return configHolder;
+  public static ConfigurableCountRangeConfig deserialize(Dynamic<?> ops) {
+    BeeType beeType = BeeType.valueOf(ops.get("bee_type").asString(null));
+    return new ConfigurableCountRangeConfig(beeType);
   }
 }

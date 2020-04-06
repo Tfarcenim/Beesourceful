@@ -1,6 +1,7 @@
 package net.minecraft.tileentity;
 
 import com.tfar.beesourceful.BeeSourceful;
+import com.tfar.beesourceful.block.IronBeehiveBlock;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -30,6 +31,13 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
   @Override
   public TileEntityType<?> getType() {
     return BeeSourceful.Objectholders.BlockEntities.iron_beehive;
+  }
+
+  @Override
+  public void tick() {
+    if (getBlockState().get(IronBeehiveBlock.TICK)) {
+      super.tick();
+    }
   }
 
   @Override

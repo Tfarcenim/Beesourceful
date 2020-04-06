@@ -1,7 +1,6 @@
 package com.tfar.beesourceful;
 
 import com.tfar.beesourceful.util.BeeType;
-import com.tfar.beesourceful.util.ConfigHolder;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -13,7 +12,7 @@ public class ModConfigs {
   public static final ModConfigs SERVER;
   public static final ForgeConfigSpec SERVER_SPEC;
 
-  public static Map<BeeType, ConfigHolder> configs = new EnumMap<>(BeeType.class);
+  public static Map<BeeType, DataClass> configs = new EnumMap<>(BeeType.class);
 
   static {
     final Pair<ModConfigs, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(ModConfigs::new);
@@ -25,14 +24,13 @@ public class ModConfigs {
     builder.push("Worldgen");
     for (BeeType beeType : BeeType.VALUES) {
       configs.put(beeType,
-              new ConfigHolder(
+              new DataClass(
                       builder.define("enable_" + beeType + "_bee_nest", true),
-                      builder.defineInRange("enable_" + beeType + "_bee_nest", 3,1,4),
-                      builder.defineInRange("enable_" + beeType + "_bee_nest",  3,1,4),
-                      builder.defineInRange("enable_" + beeType + "_bee_nest",  3,1,4),
-                      builder.defineInRange("enable_" + beeType + "_bee_nest",  3,1,4)
+                      builder.defineInRange("count_" + beeType + "_bee_nest", 5,0,Integer.MAX_VALUE),
+                      builder.defineInRange("bottom_offset_" + beeType + "_bee_nest",  0,0,Integer.MAX_VALUE),
+                      builder.defineInRange("top_offset_" + beeType + "_bee_nest",  0,0,Integer.MAX_VALUE),
+                      builder.defineInRange("maximum_" + beeType + "_bee_nest",  64,0,Integer.MAX_VALUE)
                       ));
-
     }
     builder.pop();
   }
