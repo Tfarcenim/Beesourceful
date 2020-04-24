@@ -93,7 +93,7 @@ public class BeeSourceful {
                                   configure(new ConfigurableCountRangeConfig(beeType))));
               });
             });
-
+    //todo, replace with mixin
       DispenserBlock.registerDispenseBehavior(Items.SHEARS.asItem(), new OptionalDispenseBehavior() {
         /**
          * Dispense the specified stack, play the dispense sound and spawn particles.
@@ -170,14 +170,14 @@ public class BeeSourceful {
 
     @SubscribeEvent
     public static void block(final RegistryEvent.Register<Block> event) {
-      Block.Properties irohbeehive = Block.Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL);
+      Block.Properties ironbeehive = Block.Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL);
       Block.Properties honeycomb = Block.Properties.from(Blocks.field_226908_md_);
-      register(new IronBeehiveBlock(irohbeehive), "iron_beehive", event.getRegistry());
+      register(new IronBeehiveBlock(ironbeehive), "iron_beehive", event.getRegistry());
       for (BeeType beeType : BeeType.values()) {
-        register(new IronBeehiveBlock(irohbeehive), beeType + "_bee_nest", event.getRegistry());
+        register(new IronBeehiveBlock(Block.Properties.from(Blocks.field_226905_ma_)), beeType + "_bee_nest", event.getRegistry());
         register(new Block(honeycomb), beeType + "_honeycomb_block", event.getRegistry());
       }
-      register(new CentrifugeBlock(irohbeehive), "centrifuge", event.getRegistry());
+      register(new CentrifugeBlock(ironbeehive), "centrifuge", event.getRegistry());
     }
 
     @SubscribeEvent
