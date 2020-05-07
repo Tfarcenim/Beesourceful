@@ -127,6 +127,8 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
             for (Item item : tag.getAllElements()) {
               outputs.add(Pair.of(new ItemStack(item, count), chance));
             }
+          } else {
+            outputs.add(Pair.of(ItemStack.EMPTY, chance));
           }
         }
       });
