@@ -92,9 +92,6 @@ public class CentrifugeRecipeCategory implements IRecipeCategory<CentrifugeRecip
     this.arrow.draw(27, 21);
 
     final double honeychance = .2;
-    final double chance1 = recipe.outputs.get(0).getRight();
-    final double chance2 = recipe.outputs.get(1).getRight();
-
 
     DecimalFormat decimalFormat = new DecimalFormat("##%");
 
@@ -103,14 +100,18 @@ public class CentrifugeRecipeCategory implements IRecipeCategory<CentrifugeRecip
     FontRenderer fontRenderer = minecraft.fontRenderer;
     fontRenderer.drawString(honeychancestring, 71, 42, 0xff808080);
 
-    String chance1String = decimalFormat.format(chance1);
-    String chance2String = decimalFormat.format(chance2);
+    String chance1String = "";
+    String chance2String = "";
+    if (recipe.outputs.size() > 0) {
+      chance1String = decimalFormat.format(recipe.outputs.get(0).getRight());
+    }
+    if (recipe.outputs.size() > 1) {
+      chance2String = decimalFormat.format(recipe.outputs.get(1).getRight());
+    }
 
     int size = fontRenderer.getStringWidth(chance1String);
 
     fontRenderer.drawString(chance1String, 26-size, 55, 0xff808080);
     fontRenderer.drawString(chance2String, 66, 55, 0xff808080);
-
-
   }
 }

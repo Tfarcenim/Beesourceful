@@ -5,9 +5,12 @@ import com.google.gson.JsonObject;
 import com.tfar.beesourceful.BeeSourceful;
 import com.tfar.beesourceful.BetterJSONUtils;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
@@ -109,11 +112,23 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
       List<Pair<ItemStack,Double>> outputs = new ArrayList<>();
       jsonArray.forEach(jsonElement -> {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String registryname = JSONUtils.getString(jsonObject,"item");
         int count = JSONUtils.getInt(jsonObject,"count",1);
         double chance = BetterJSONUtils.getDouble(jsonObject,"chance",1);
-        ItemStack stack = new ItemStack(Registry.ITEM.getOrDefault(new ResourceLocation(registryname)),count);
-        outputs.add(Pair.of(stack,chance));
+
+        if (jsonObject.has("item")) {
+          String registryname = JSONUtils.getString(jsonObject,"item");
+          Item item = Registry.ITEM.getOrDefault(new ResourceLocation(registryname));
+          ItemStack stack = new ItemStack(item ,count);
+          outputs.add(Pair.of(stack, chance));
+        } else if (jsonObject.has("tag")) {
+          String registryname = JSONUtils.getString(jsonObject,"tag");
+          Tag<Item> tag = ItemTags.getCollection().get(new ResourceLocation(registryname));
+          if (!tag.getAllElements().isEmpty()) {
+            for (Item item : tag.getAllElements()) {
+              outputs.add(Pair.of(new ItemStack(item, count), chance));
+            }
+          }
+        }
       });
 
       int time = JSONUtils.getInt(json,"time");

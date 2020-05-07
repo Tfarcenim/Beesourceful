@@ -46,7 +46,7 @@ public enum BeeType {
           GenerationStage.Decoration.UNDERGROUND_ORES,
           biome -> biome.getCategory() == Biome.Category.NETHER,
           Blocks.NETHERRACK.getDefaultState(),
-          () -> Objectholders.ender_bee_nest,
+          () -> Objectholders.quartz_bee_nest,
           new OreBeeNestFeature(ReplaceBlockConfig::deserialize, () -> Objectholders.Entities.quartz_bee)),
 
   lapis(() -> Objectholders.Entities.lapis_bee,
