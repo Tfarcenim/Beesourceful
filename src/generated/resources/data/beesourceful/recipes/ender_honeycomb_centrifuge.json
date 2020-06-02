@@ -3,6 +3,10 @@
   "ingredient": {
     "tag": "forge:honeycombs/ender"
   },
+  "fluidstack": {
+    "fluid": "beesourceful:honey",
+    "amount": 200
+  },
   "results": [
     {
       "item": "minecraft:ender_pearl"

@@ -12,6 +12,7 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -26,20 +27,23 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
   public final ResourceLocation id;
   public final Ingredient ingredient;
   public final List<Pair<ItemStack,Double>> outputs;
+  public final FluidStack fluid;
   public final int time;
 
   public CentrifugeRecipe(ResourceLocation id,
-                          Ingredient ingredient, List<Pair<ItemStack,Double>> outputs, int time) {
+													Ingredient ingredient, List<Pair<ItemStack, Double>> outputs, FluidStack fluid, int time) {
     this.id = id;
     this.ingredient = ingredient;
     this.outputs = outputs;
-    this.time = time;
+		this.fluid = fluid;
+		this.time = time;
   }
 
   @Override
   public boolean matches(IInventory inventory, World world) {
     return ingredient.test(inventory.getStackInSlot(0));
   }
+
   /** use CentrifugeRecipe#getCraftingResults instead*/
   @Override
   @Nonnull
@@ -111,22 +115,23 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         String registryname = JSONUtils.getString(jsonObject,"item");
         int count = JSONUtils.getInt(jsonObject,"count",1);
-        double chance = BetterJSONUtils.getDouble(jsonObject,"chance",1);
+        double chance = BetterJSONUtils.getOrDefaultDouble(jsonObject,"chance",1);
         ItemStack stack = new ItemStack(Registry.ITEM.getOrDefault(new ResourceLocation(registryname)),count);
         outputs.add(Pair.of(stack,chance));
       });
-
+      FluidStack fluidStack = BetterJSONUtils.getFluidStack(json,"fluidstack");
       int time = JSONUtils.getInt(json,"time");
 
-      return this.factory.create(id, ingredient, outputs,time);
+      return this.factory.create(id, ingredient, outputs,fluidStack,time);
     }
 
     public T read(ResourceLocation id, PacketBuffer buffer) {
       Ingredient ingredient = Ingredient.read(buffer);
       List<Pair<ItemStack,Double>> outputs = new ArrayList<>();
       IntStream.range(0,buffer.readInt()).forEach(i -> outputs.add(Pair.of(buffer.readItemStack(),buffer.readDouble())));
+      FluidStack fluid = buffer.readFluidStack();
       int time = buffer.readInt();
-      return this.factory.create(id, ingredient, outputs,time);
+      return this.factory.create(id, ingredient, outputs,fluid,time);
     }
 
     public void write(PacketBuffer buffer, T recipe) {
@@ -136,11 +141,13 @@ public class CentrifugeRecipe implements IRecipe<IInventory> {
         buffer.writeItemStack(itemStackDoublePair.getLeft());
         buffer.writeDouble(itemStackDoublePair.getRight());
       });
+      buffer.writeFluidStack(recipe.fluid);
       buffer.writeInt(recipe.time);
     }
 
     public interface IRecipeFactory<T extends CentrifugeRecipe> {
-      T create(ResourceLocation id, Ingredient input, List<Pair<ItemStack,Double>> stacks,int time);
+      T create(ResourceLocation id, Ingredient input, List<Pair<ItemStack,Double>> stacks,FluidStack fluid,
+							 int time);
     }
   }
 }

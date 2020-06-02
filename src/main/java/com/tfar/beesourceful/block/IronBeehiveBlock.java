@@ -3,7 +3,7 @@ package com.tfar.beesourceful.block;
 import net.minecraft.block.Block;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.IronBeehiveBlockEntity;
+import com.tfar.beesourceful.blockentity.IronBeehiveBlockEntity;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.BlockState;

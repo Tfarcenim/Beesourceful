@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -18,18 +19,20 @@ public class CentrifugeRecipeBuilder {
   private final List<Pair<ItemStack,Double>> results;
   private final Ingredient input1;
   private final IRecipeSerializer<?> serializer;
+  private final FluidStack fluid;
   private final int time;
 
   public CentrifugeRecipeBuilder(IRecipeSerializer<?> p_i50787_1_, Ingredient input1,
-                                 List<Pair<ItemStack, Double>> results, int time) {
+                                 List<Pair<ItemStack, Double>> results, FluidStack fluid, int time) {
     this.serializer = p_i50787_1_;
     this.results = results;
     this.input1 = input1;
+    this.fluid = fluid;
     this.time = time;
   }
 
-  public static CentrifugeRecipeBuilder centrifugeRecipe(Ingredient ingredient, List<Pair<ItemStack, Double>> results,int time) {
-    return new CentrifugeRecipeBuilder(BeeSourceful.Objectholders.Recipes.centrifuge, ingredient, results, time);
+  public static CentrifugeRecipeBuilder centrifugeRecipe(Ingredient ingredient, List<Pair<ItemStack, Double>> results, FluidStack fluid,int time) {
+    return new CentrifugeRecipeBuilder(BeeSourceful.Objectholders.Recipes.centrifuge, ingredient, results,fluid, time);
   }
 
   public void build(Consumer<IFinishedRecipe> consumer, String id) {
@@ -37,21 +40,23 @@ public class CentrifugeRecipeBuilder {
   }
 
   public void build(Consumer<IFinishedRecipe> consumer, ResourceLocation id) {
-    consumer.accept(new CentrifugeRecipeBuilder.Result(id, this.serializer, this.input1, this.results,this.time));
+    consumer.accept(new CentrifugeRecipeBuilder.Result(id, this.serializer, this.input1, this.results,this.fluid,this.time));
   }
 
   public static class Result implements IFinishedRecipe {
     private final ResourceLocation id;
     private final Ingredient ingredient;
     private final List<Pair<ItemStack,Double>> results;
+    private final FluidStack fluid;
     private final int time;
     private final IRecipeSerializer<?> serializer;
 
-    public Result(ResourceLocation id, IRecipeSerializer<?> serializer, Ingredient input, List<Pair<ItemStack,Double>> results,int time) {
+    public Result(ResourceLocation id, IRecipeSerializer<?> serializer, Ingredient input, List<Pair<ItemStack, Double>> results, FluidStack fluid, int time) {
       this.id = id;
       this.serializer = serializer;
       this.ingredient = input;
       this.results = results;
+      this.fluid = fluid;
       this.time = time;
     }
 
@@ -69,6 +74,10 @@ public class CentrifugeRecipeBuilder {
           jsonObject.addProperty("chance", itemStackDoublePair.getLeft().getCount());
         jsonArray.add(jsonObject);
       });
+      JsonObject fluidjson = new JsonObject();
+      fluidjson.addProperty("fluid",this.fluid.getFluid().getRegistryName().toString());
+      fluidjson.addProperty("amount",this.fluid.getAmount());
+      json.add("fluidstack",fluidjson);
       json.add("results", jsonArray);
       json.addProperty("time",time);
     }

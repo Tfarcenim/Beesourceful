@@ -1,4 +1,4 @@
-package net.minecraft.tileentity;
+package com.tfar.beesourceful.blockentity;
 
 import com.tfar.beesourceful.BeeSourceful;
 import com.tfar.beesourceful.block.IronBeehiveBlock;
@@ -7,10 +7,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.IronBeeEntity;
+import com.tfar.beesourceful.entity.IronBeeEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tileentity.BeehiveTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -96,7 +100,7 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
   }
 
   public void tryEnterHive(Entity bee, boolean hasNectar, int ticksInHive) {
-    if (this.bees.size() < 3) {
+    if (!isFullOfBees()) {
       bee.removePassengers();
       CompoundNBT nbt = new CompoundNBT();
       bee.writeUnlessPassenger(nbt);
@@ -108,8 +112,8 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
             this.flowerPos = bee1.getFlowerPos();
           }
         }
-        BlockPos lvt_5_2_ = this.getPos();
-        this.world.playSound(null, (double)lvt_5_2_.getX(), (double)lvt_5_2_.getY(), (double)lvt_5_2_.getZ(), SoundEvents.field_226131_af_, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        BlockPos pos = this.getPos();
+        this.world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.field_226131_af_, SoundCategory.BLOCKS, 1.0F, 1.0F);
       }
       if (bee.getType() == BeeSourceful.Objectholders.Entities.ender_bee){
         this.world.addParticle(ParticleTypes.PORTAL, bee.getParticleX(0.5D),
@@ -127,7 +131,7 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
 
   @Override
   public boolean isFullOfBees() {
-    return bees.size() > 3;
+    return bees.size() >= 5;
   }
 
   public Item getResourceHoneyComb(){
@@ -171,11 +175,5 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
       nbt.put("Honeycombs",combs);
     }
     return nbt;
-  }
-
-  public static class Bee2 extends Bee {
-    public Bee2(CompoundNBT p_i225767_1_, int p_i225767_2_, int p_i225767_3_) {
-      super(p_i225767_1_, p_i225767_2_, p_i225767_3_);
-    }
   }
 }

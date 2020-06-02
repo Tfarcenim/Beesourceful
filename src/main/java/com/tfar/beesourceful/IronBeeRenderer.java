@@ -18,18 +18,18 @@ public class IronBeeRenderer extends BeeRenderer {
   public IronBeeRenderer(EntityRendererManager p_i226033_1_, BeeType beeType) {
     super(p_i226033_1_);
     String s = "textures/entity/";
-    ANGRY_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType+"_bee_angry.png");
-    ANGRY_NECTAR_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType+"_bee_angry_nectar.png");
-    PASSIVE_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType+"_bee.png");
-    NECTAR_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType+"_bee_nectar.png");
+    ANGRY_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.id.getPath()+"_bee_angry.png");
+    ANGRY_NECTAR_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.id.getPath()+"_bee_angry_nectar.png");
+    PASSIVE_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.id.getPath()+"_bee.png");
+    NECTAR_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.id.getPath()+"_bee_nectar.png");
   }
 
   @Nonnull
-  public ResourceLocation getEntityTexture(BeeEntity p_110775_1_) {
-    if (p_110775_1_.isAngry()) {
-      return p_110775_1_.hasNectar() ? ANGRY_NECTAR_SKIN : ANGRY_SKIN;
+  public ResourceLocation getEntityTexture(BeeEntity beeEntity) {
+    if (beeEntity.isAngry()) {
+      return beeEntity.hasNectar() ? ANGRY_NECTAR_SKIN : ANGRY_SKIN;
     } else {
-      return p_110775_1_.hasNectar() ? NECTAR_SKIN : PASSIVE_SKIN;
+      return beeEntity.hasNectar() ? NECTAR_SKIN : PASSIVE_SKIN;
     }
   }
 }

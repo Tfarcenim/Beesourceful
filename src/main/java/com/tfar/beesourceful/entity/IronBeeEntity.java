@@ -1,10 +1,11 @@
-package net.minecraft.entity.passive;
+package com.tfar.beesourceful.entity;
 
 import com.tfar.beesourceful.BeeSourceful;
 import net.minecraft.block.DoublePlantBlock;
+import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tileentity.IronBeehiveBlockEntity;
+import com.tfar.beesourceful.blockentity.IronBeehiveBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -52,13 +53,13 @@ public class IronBeeEntity extends BeeEntity {
     this.goalSelector.addGoal(5, new UpdateBeehiveGoal2());
     this.moveToHiveGoal = new FindBeehiveGoal2();
     this.goalSelector.addGoal(5, this.moveToHiveGoal);
-    this.moveToFlowerGoal = new BeeEntity.FindFlowerGoal();
+    this.moveToFlowerGoal = new FindFlowerGoal();
     this.goalSelector.addGoal(6, this.moveToFlowerGoal);
     this.goalSelector.addGoal(7, new FindPollinationTargetGoal2());
-    this.goalSelector.addGoal(8, new BeeEntity.WanderGoal());
+    this.goalSelector.addGoal(8, new WanderGoal());
     this.goalSelector.addGoal(9, new SwimGoal(this));
-    this.targetSelector.addGoal(1, (new BeeEntity.AngerGoal(this)).setCallsForHelp());
-    this.targetSelector.addGoal(2, new BeeEntity.AttackPlayerGoal(this));
+    this.targetSelector.addGoal(1, (new AngerGoal(this)).setCallsForHelp());
+    this.targetSelector.addGoal(2, new AttackPlayerGoal(this));
   }
 
   @Override
@@ -129,7 +130,7 @@ public class IronBeeEntity extends BeeEntity {
     return block.isIn(Tags.Blocks.STONE);
   }
 
-  public class FindBeehiveGoal2 extends BeeEntity.FindBeehiveGoal {
+  public class FindBeehiveGoal2 extends FindBeehiveGoal {
 
     public FindBeehiveGoal2(){
       super();

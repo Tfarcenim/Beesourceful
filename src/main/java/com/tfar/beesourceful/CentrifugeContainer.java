@@ -1,5 +1,6 @@
 package com.tfar.beesourceful;
 
+import com.tfar.beesourceful.blockentity.CentrifugeBlockEntity;
 import com.tfar.beesourceful.inventory.OutputSlot;
 import com.tfar.beesourceful.inventory.SlotItemHandlerUnconditioned;
 import com.tfar.beesourceful.util.FunctionalIntReferenceHolder;
@@ -28,13 +29,12 @@ public class CentrifugeContainer extends Container {
     this.trackInt(new FunctionalIntReferenceHolder(() -> centrifugeBlockEntity.time, v -> centrifugeBlockEntity.time = v));
     this.trackInt(new FunctionalIntReferenceHolder(() -> centrifugeBlockEntity.totalTime, v -> centrifugeBlockEntity.totalTime = v));
 
-    this.addSlot(new SlotItemHandlerUnconditioned(centrifugeBlockEntity.h, 0, 80, 15));
-    this.addSlot(new SlotItemHandlerUnconditioned(centrifugeBlockEntity.h, 1, 44, 38));
+    this.addSlot(new SlotItemHandlerUnconditioned(centrifugeBlockEntity.h, 0, 26, 38));
 
-    this.addSlot(new SlotItemHandlerUnconditioned(centrifugeBlockEntity.h, 2, 115, 38));
-
-    this.addSlot(new OutputSlot(centrifugeBlockEntity.h, 3, 71, 60));
-    this.addSlot(new OutputSlot(centrifugeBlockEntity.h, 4, 89, 60));
+    this.addSlot(new OutputSlot(centrifugeBlockEntity.h, 1, 116, 29));
+    this.addSlot(new OutputSlot(centrifugeBlockEntity.h, 2, 134, 29));
+    this.addSlot(new OutputSlot(centrifugeBlockEntity.h, 3, 116, 47));
+    this.addSlot(new OutputSlot(centrifugeBlockEntity.h, 4, 134, 47));
 
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 9; ++j) {

@@ -1,12 +1,10 @@
 package com.tfar.beesourceful.feature;
 
 import com.mojang.datafixers.Dynamic;
-import com.tfar.beesourceful.ModConfigs;
-import com.tfar.beesourceful.util.BeeType;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.IronBeeEntity;
+import com.tfar.beesourceful.entity.IronBeeEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.IronBeehiveBlockEntity;
+import com.tfar.beesourceful.blockentity.IronBeehiveBlockEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -40,10 +38,9 @@ public class OreBeeNestFeature extends Feature<ReplaceBlockConfig> {
           IronBeeEntity ironBeeEntity = beeType.get().create(world.getWorld());
           CompoundNBT compoundnbt = new CompoundNBT();
           ironBeeEntity.writeUnlessPassenger(compoundnbt);
-          IronBeehiveBlockEntity.Bee2 beehivetileentity$bee = new IronBeehiveBlockEntity.Bee2(compoundnbt, 0, 2400);
+          IronBeehiveBlockEntity.Bee beehivetileentity$bee = new IronBeehiveBlockEntity.Bee(compoundnbt, 0, 2400);
           nest.bees.add(beehivetileentity$bee);
         }
-        System.out.println(pos + beeType.toString());
       }
     }
     return true;

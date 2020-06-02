@@ -5,7 +5,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
-import net.minecraft.entity.passive.IronBeeEntity;
 import net.minecraft.item.Item;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.World;

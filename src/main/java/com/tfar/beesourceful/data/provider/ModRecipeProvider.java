@@ -16,6 +16,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -65,56 +66,56 @@ public class ModRecipeProvider extends RecipeProvider {
             Ingredient.fromTag(new ItemTags.Wrapper(new ResourceLocation("forge", "honeycombs/iron"))),
             Lists.newArrayList(
                     Pair.of(new ItemStack(Items.IRON_INGOT), 1d),
-                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)), 200)
+                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)),new FluidStack(BeeSourceful.honey.get(),200), 200)
             .build(consumer, centWrapper("iron_honeycomb"));
 
     CentrifugeRecipeBuilder.centrifugeRecipe(
             Ingredient.fromTag(new ItemTags.Wrapper(new ResourceLocation("forge", "honeycombs/gold"))),
             Lists.newArrayList(
                     Pair.of(new ItemStack(Items.GOLD_INGOT), 1d),
-                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)), 200)
+                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)),new FluidStack(BeeSourceful.honey.get(),200),  200)
             .build(consumer, centWrapper("gold_honeycomb"));
 
     CentrifugeRecipeBuilder.centrifugeRecipe(
             Ingredient.fromTag(new ItemTags.Wrapper(new ResourceLocation("forge", "honeycombs/diamond"))),
             Lists.newArrayList(
                     Pair.of(new ItemStack(Items.DIAMOND), 1d),
-                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)), 200)
+                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)),new FluidStack(BeeSourceful.honey.get(),200),  200)
             .build(consumer, centWrapper("diamond_honeycomb"));
 
     CentrifugeRecipeBuilder.centrifugeRecipe(
             Ingredient.fromTag(new ItemTags.Wrapper(new ResourceLocation("forge", "honeycombs/lapis"))),
             Lists.newArrayList(
                     Pair.of(new ItemStack(Items.LAPIS_LAZULI, 6), 1d),
-                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)), 200)
+                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)),new FluidStack(BeeSourceful.honey.get(),200),  200)
             .build(consumer, centWrapper("lapis_honeycomb"));
 
     CentrifugeRecipeBuilder.centrifugeRecipe(
             Ingredient.fromTag(new ItemTags.Wrapper(new ResourceLocation("forge", "honeycombs/redstone"))),
             Lists.newArrayList(
                     Pair.of(new ItemStack(Items.REDSTONE, 4), 1d),
-                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)), 200)
+                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)),new FluidStack(BeeSourceful.honey.get(),200),  200)
             .build(consumer, centWrapper("redstone_honeycomb"));
 
     CentrifugeRecipeBuilder.centrifugeRecipe(
             Ingredient.fromTag(new ItemTags.Wrapper(new ResourceLocation("forge", "honeycombs/emerald"))),
             Lists.newArrayList(
                     Pair.of(new ItemStack(Items.EMERALD), 1d),
-                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)), 200)
+                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)),new FluidStack(BeeSourceful.honey.get(),200),  200)
             .build(consumer, centWrapper("emerald_honeycomb"));
 
     CentrifugeRecipeBuilder.centrifugeRecipe(
             Ingredient.fromTag(new ItemTags.Wrapper(new ResourceLocation("forge", "honeycombs/quartz"))),
             Lists.newArrayList(
                     Pair.of(new ItemStack(Items.QUARTZ), 1d),
-                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)), 200)
+                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)),new FluidStack(BeeSourceful.honey.get(),200),  200)
             .build(consumer, centWrapper("quartz_honeycomb"));
 
     CentrifugeRecipeBuilder.centrifugeRecipe(
             Ingredient.fromTag(new ItemTags.Wrapper(new ResourceLocation("forge", "honeycombs/ender"))),
             Lists.newArrayList(
                     Pair.of(new ItemStack(Items.ENDER_PEARL), 1d),
-                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)), 200)
+                    Pair.of(new ItemStack(BeeSourceful.Objectholders.beeswax), 1d)), new FluidStack(BeeSourceful.honey.get(),200), 200)
             .build(consumer, centWrapper("ender_honeycomb"));
   }
 

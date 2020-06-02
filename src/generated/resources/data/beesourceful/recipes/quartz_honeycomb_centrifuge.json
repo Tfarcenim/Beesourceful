@@ -3,6 +3,10 @@
   "ingredient": {
     "tag": "forge:honeycombs/quartz"
   },
+  "fluidstack": {
+    "fluid": "beesourceful:honey",
+    "amount": 200
+  },
   "results": [
     {
       "item": "minecraft:quartz"

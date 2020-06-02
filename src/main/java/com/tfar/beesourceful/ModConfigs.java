@@ -4,7 +4,7 @@ import com.tfar.beesourceful.util.BeeType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ModConfigs {
@@ -12,7 +12,7 @@ public class ModConfigs {
   public static final ModConfigs SERVER;
   public static final ForgeConfigSpec SERVER_SPEC;
 
-  public static Map<BeeType, DataClass> configs = new EnumMap<>(BeeType.class);
+  public static Map<BeeType, DataClass> configs = new HashMap<>();
 
   static {
     final Pair<ModConfigs, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(ModConfigs::new);
@@ -21,20 +21,19 @@ public class ModConfigs {
   }
 
   private ModConfigs(ForgeConfigSpec.Builder builder) {
-    builder.push("Worldgen");
-    for (BeeType beeType : BeeType.VALUES) {
+    builder.push("worldgen");
+    for (BeeType beeType : BeeType.bee_registry.values()) {
+      builder.push(beeType.id.getPath()+"_bee_nest");
       configs.put(beeType,
               new DataClass(
-                      builder.define("enable_" + beeType + "_bee_nest", true),
-                      builder.defineInRange("count_" + beeType + "_bee_nest", 5,0,Integer.MAX_VALUE),
-                      builder.defineInRange("bottom_offset_" + beeType + "_bee_nest",  0,0,Integer.MAX_VALUE),
-                      builder.defineInRange("top_offset_" + beeType + "_bee_nest",  0,0,Integer.MAX_VALUE),
-                      builder.defineInRange("maximum_" + beeType + "_bee_nest",  64,0,Integer.MAX_VALUE)
+                      builder.define("enabled", true),
+                      builder.defineInRange("count", 5,0,Integer.MAX_VALUE),
+                      builder.defineInRange("bottom_offset",  0,0,Integer.MAX_VALUE),
+                      builder.defineInRange("top_offset",  0,0,Integer.MAX_VALUE),
+                      builder.defineInRange("maximum",  64,0,Integer.MAX_VALUE)
                       ));
+      builder.pop();
     }
     builder.pop();
-  }
-  public static class Defaults {
-
   }
 }

@@ -3,6 +3,10 @@
   "ingredient": {
     "tag": "forge:honeycombs/emerald"
   },
+  "fluidstack": {
+    "fluid": "beesourceful:honey",
+    "amount": 200
+  },
   "results": [
     {
       "item": "minecraft:emerald"

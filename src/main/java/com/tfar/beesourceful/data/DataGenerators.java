@@ -10,7 +10,7 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 @Mod.EventBusSubscriber (bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
   @SubscribeEvent
-  public static void getherdata(GatherDataEvent e){
+  public static void gatherData(GatherDataEvent e){
     DataGenerator gen = e.getGenerator();
     ExistingFileHelper helper = e.getExistingFileHelper();
 
@@ -23,6 +23,7 @@ public class DataGenerators {
       gen.addProvider(new ModLootTableProvider(gen));
       gen.addProvider(new ModRecipeProvider(gen));
       gen.addProvider(new ModItemTagsProvider(gen));
+      gen.addProvider(new ModFluidTagsProvider(gen));
     }
   }
 }

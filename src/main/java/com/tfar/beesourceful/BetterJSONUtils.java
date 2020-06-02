@@ -3,7 +3,11 @@ package com.tfar.beesourceful;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.util.JSONUtils;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraftforge.fluids.FluidStack;
 
 public class BetterJSONUtils {
 
@@ -23,7 +27,34 @@ public class BetterJSONUtils {
     }
   }
 
-  public static double getDouble(JsonObject p_151221_0_, String p_151221_1_, double p_151221_2_) {
-    return p_151221_0_.has(p_151221_1_) ? getDouble(p_151221_0_.get(p_151221_1_), p_151221_1_) : p_151221_2_;
+  public static double getOrDefaultDouble(JsonObject p_151221_0_, String p_151221_1_, double defaultValue) {
+    return p_151221_0_.has(p_151221_1_) ? getDouble(p_151221_0_.get(p_151221_1_), p_151221_1_) : defaultValue;
   }
+
+  public static FluidStack getFluidStack(JsonObject jsonObject,String string) {
+    JsonObject json = jsonObject.get(string).getAsJsonObject();
+    Fluid fluid = getFluid(json,"fluid");
+    int amount = JSONUtils.getInt(json,"amount",1000);
+    return new FluidStack(fluid,amount);
+  }
+
+  public static Fluid getFluid(JsonElement p_188172_0_, String p_188172_1_) {
+    if (p_188172_0_.isJsonPrimitive()) {
+      String lvt_2_1_ = p_188172_0_.getAsString();
+      return Registry.FLUID.getValue(new ResourceLocation(lvt_2_1_)).orElseThrow(() -> {
+        return new JsonSyntaxException("Expected " + p_188172_1_ + " to be a fluid, was unknown string '" + lvt_2_1_ + "'");
+      });
+    } else {
+      throw new JsonSyntaxException("Expected " + p_188172_1_ + " to be a fluid, was " +  JSONUtils.toString(p_188172_0_));
+    }
+  }
+
+  public static Fluid getFluid(JsonObject p_188180_0_, String p_188180_1_) {
+    if (p_188180_0_.has(p_188180_1_)) {
+      return getFluid(p_188180_0_.get(p_188180_1_), p_188180_1_);
+    } else {
+      throw new JsonSyntaxException("Missing " + p_188180_1_ + ", expected to find a fluid");
+    }
+  }
+
 }

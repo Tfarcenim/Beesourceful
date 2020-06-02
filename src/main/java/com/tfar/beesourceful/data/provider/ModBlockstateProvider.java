@@ -5,6 +5,7 @@ import com.tfar.beesourceful.block.CentrifugeBlock;
 import com.tfar.beesourceful.block.IronBeehiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
@@ -22,6 +23,7 @@ public class ModBlockstateProvider extends BlockStateProvider {
 
     centrifuge();
     ironBeehive();
+    liquidHoneyBlock();
 
     BeeSourceful.RegistryEvents.blocks.stream().filter(IronBeehiveBlock.class::isInstance)
             .filter(block -> block != BeeSourceful.Objectholders.iron_beehive)
@@ -47,7 +49,8 @@ public class ModBlockstateProvider extends BlockStateProvider {
                       ConfiguredModel.builder().modelFile(modelHoney).build() : ConfiguredModel.builder().modelFile(model).build());
             });
 
-    BeeSourceful.RegistryEvents.blocks.stream().filter(block -> block.getRegistryName().getPath().contains("honeycomb"))
+    BeeSourceful.RegistryEvents.blocks.stream()
+            .filter(block -> block.getRegistryName().getPath().contains("honeycomb"))
             .forEach(block -> {
               String name = block.getRegistryName().getPath();
               ModelFile model = models().getBuilder(name)
@@ -55,6 +58,20 @@ public class ModBlockstateProvider extends BlockStateProvider {
                       .texture("all", new ResourceLocation(BeeSourceful.MODID, "block/" + name));
               getVariantBuilder(block).forAllStates(state -> ConfiguredModel.builder().modelFile(model).build());
             });
+
+  }
+
+  protected void liquidHoneyBlock() {
+    Block honeyblock = BeeSourceful.honey_block.get();
+
+    String name = honeyblock.getRegistryName().getPath();
+    ModelFile model = models().getBuilder(name)
+            .texture("particle",mcLoc("block/water_still"));
+
+    getVariantBuilder(honeyblock).forAllStatesExcept(state ->  ConfiguredModel.builder()
+                    .modelFile(model).build(),
+            BlockStateProperties.LEVEL_0_15);
+
   }
 
   protected void centrifuge(){

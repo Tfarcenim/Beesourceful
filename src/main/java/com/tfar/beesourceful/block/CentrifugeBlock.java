@@ -1,6 +1,6 @@
 package com.tfar.beesourceful.block;
 
-import com.tfar.beesourceful.CentrifugeBlockEntity;
+import com.tfar.beesourceful.blockentity.CentrifugeBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;

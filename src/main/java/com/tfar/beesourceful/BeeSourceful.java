@@ -3,6 +3,7 @@ package com.tfar.beesourceful;
 import com.google.common.collect.Sets;
 import com.tfar.beesourceful.block.CentrifugeBlock;
 import com.tfar.beesourceful.block.IronBeehiveBlock;
+import com.tfar.beesourceful.blockentity.CentrifugeBlockEntity;
 import com.tfar.beesourceful.entity.*;
 import com.tfar.beesourceful.recipe.CentrifugeRecipe;
 import com.tfar.beesourceful.util.BeeType;
@@ -21,13 +22,15 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.BeeEntity;
-import net.minecraft.entity.passive.IronBeeEntity;
+import com.tfar.beesourceful.entity.IronBeeEntity;
+import net.minecraft.fluid.FlowingFluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.BeehiveTileEntity;
-import net.minecraft.tileentity.IronBeehiveBlockEntity;
+import com.tfar.beesourceful.blockentity.IronBeehiveBlockEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -40,18 +43,19 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.*;
 
 import java.util.*;
 
@@ -63,12 +67,44 @@ public class BeeSourceful {
 
   public static final String MODID = "beesourceful";
 
+  public static final ResourceLocation FLUID_STILL = new ResourceLocation("minecraft:block/water_still");
+  public static final ResourceLocation FLUID_FLOWING = new ResourceLocation("minecraft:block/water_flow");
+
+  public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
+  public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
+  public static final DeferredRegister<Fluid> FLUIDS = new DeferredRegister<>(ForgeRegistries.FLUIDS, MODID);
+
+
+  public static RegistryObject<FlowingFluid> honey = FLUIDS.register("honey", () ->
+          new HoneyFluid.Source(BeeSourceful.honey_properties)
+  );
+  public static RegistryObject<FlowingFluid> flowing_honey = FLUIDS.register("flowing_honey", () ->
+          new HoneyFluid.Flowing(BeeSourceful.honey_properties)
+  );
+
+  public static RegistryObject<FlowingFluidBlock> honey_block = BLOCKS.register("honey", () ->
+          new LiquidHoneyBlock(honey, Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
+  );
+  public static RegistryObject<Item> honey_bucket = ITEMS.register("honey_bucket", () ->
+          new BucketItem(honey, new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ItemGroup.MISC))
+  );
+
+  public static final ForgeFlowingFluid.Properties honey_properties =
+          new ForgeFlowingFluid.Properties(honey, flowing_honey, FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).color(0xffff9000))
+                  .bucket(honey_bucket).block(honey_block);
+
   public BeeSourceful() {
     // Register the setup method for modloading
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     // Register the doClientStuff method for modloading
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
+
+    IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+    BLOCKS.register(modEventBus);
+    ITEMS.register(modEventBus);
+    FLUIDS.register(modEventBus);
   }
 
   public static final Placement<ConfigurableCountRangeConfig> CONFIGURABLE_COUNT_RANGE = new ConfigurableCountRange(ConfigurableCountRangeConfig::deserialize);
@@ -83,16 +119,15 @@ public class BeeSourceful {
 
     PointOfInterestType.field_221073_u.putAll(pointOfInterestTypeMap);
 
-    ForgeRegistries.BIOMES.forEach(biome -> {
-              Arrays.stream(BeeType.VALUES).forEach(beeType -> {
-                if (beeType.allowed_biomes.test(biome))
-                  biome.addFeature(beeType.generation_stage,
-                          beeType.feature.configure(new ReplaceBlockConfig(beeType.replace_block,
-                                          beeType.beehive.get().getDefaultState().with(IronBeehiveBlock.TICK,false)
-                                  )).createDecoratedFeature(CONFIGURABLE_COUNT_RANGE.
-                                  configure(new ConfigurableCountRangeConfig(beeType))));
-              });
-            });
+    ForgeRegistries.BIOMES.forEach(biome -> BeeType.bee_registry.values().forEach(beeType -> {
+      if (beeType.allowed_biomes.test(biome))
+        biome.addFeature(beeType.generation_stage,
+                beeType.feature.configure(new ReplaceBlockConfig(beeType.replace_block,
+                                beeType.beehive.get().getDefaultState().with(IronBeehiveBlock.TICK,false)
+                        )).createDecoratedFeature(CONFIGURABLE_COUNT_RANGE.
+                        configure(new ConfigurableCountRangeConfig(beeType))));
+    }));
+
     //todo, replace with mixin
       DispenserBlock.registerDispenseBehavior(Items.SHEARS.asItem(), new OptionalDispenseBehavior() {
         /**
@@ -173,9 +208,9 @@ public class BeeSourceful {
       Block.Properties ironbeehive = Block.Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL);
       Block.Properties honeycomb = Block.Properties.from(Blocks.field_226908_md_);
       register(new IronBeehiveBlock(ironbeehive), "iron_beehive", event.getRegistry());
-      for (BeeType beeType : BeeType.values()) {
-        register(new IronBeehiveBlock(Block.Properties.from(Blocks.field_226905_ma_)), beeType + "_bee_nest", event.getRegistry());
-        register(new Block(honeycomb), beeType + "_honeycomb_block", event.getRegistry());
+      for (BeeType beeType : BeeType.bee_registry.values()) {
+        register(new IronBeehiveBlock(Block.Properties.from(Blocks.field_226905_ma_)), beeType.id.getPath() + "_bee_nest", event.getRegistry());
+        register(new Block(honeycomb), beeType.id.getPath() + "_honeycomb_block", event.getRegistry());
       }
       register(new CentrifugeBlock(ironbeehive), "centrifuge", event.getRegistry());
     }
@@ -250,8 +285,8 @@ public class BeeSourceful {
         register(new BlockItem(block, properties), block.getRegistryName(), event.getRegistry());
       }
       register(new Item(properties1),"beeswax",event.getRegistry());
-      for (BeeType beeType : BeeType.values()) {
-        register(new Item(properties1), beeType + "_honeycomb", event.getRegistry());
+      for (BeeType beeType : BeeType.bee_registry.values()) {
+        register(new Item(properties1), beeType.id.getPath() + "_honeycomb", event.getRegistry());
       }
     }
 
@@ -293,11 +328,11 @@ public class BeeSourceful {
                       0, 1),
               "iron_beehive", event.getRegistry());
 
-      for (BeeType beeType : BeeType.values()) {
+      for (BeeType beeType : BeeType.bee_registry.values()) {
         register(new PointOfInterestType(beeType + "_bee_nest",
-                        new HashSet<>(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(beeType + "_bee_nest"))
+                        new HashSet<>(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(beeType.id.getPath() + "_bee_nest"))
                                 .getStateContainer().getValidStates()), 0, 1)
-                , beeType + "_bee_nest", event.getRegistry());
+                , beeType.id.getPath() + "_bee_nest", event.getRegistry());
       }
     }
 
@@ -323,9 +358,9 @@ public class BeeSourceful {
   public static class ClientEvents {
     @SubscribeEvent
     public static void registerModels(FMLClientSetupEvent event) {
-      for (BeeType beeType : BeeType.values())
+      for (BeeType beeType : BeeType.bee_registry.values())
         RenderingRegistry.registerEntityRenderingHandler(
-                (EntityType<BeeEntity>) ForgeRegistries.ENTITIES.getValue(new ResourceLocation(MODID, beeType + "_bee")),
+                (EntityType<BeeEntity>) ForgeRegistries.ENTITIES.getValue(new ResourceLocation(MODID, beeType.id.getPath() + "_bee")),
                 (EntityRendererManager p_i226033_1_) -> new IronBeeRenderer(p_i226033_1_, beeType));
     }
   }
