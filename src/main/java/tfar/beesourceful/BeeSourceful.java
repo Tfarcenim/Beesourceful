@@ -12,7 +12,6 @@ import tfar.beesourceful.util.ConfigurableCountRangeConfig;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.dispenser.OptionalDispenseBehavior;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -206,6 +205,9 @@ public class BeeSourceful {
 
     @SubscribeEvent
     public static void block(final RegistryEvent.Register<Block> event) {
+
+      BeeType.loadCustomBees();
+
       Block.Properties ironbeehive = Block.Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL);
       Block.Properties honeycomb = Block.Properties.from(Blocks.field_226908_md_);
       register(new IronBeehiveBlock(ironbeehive), "iron_beehive", event.getRegistry());
@@ -361,7 +363,7 @@ public class BeeSourceful {
       for (BeeType beeType : BeeType.bee_registry.values())
         RenderingRegistry.registerEntityRenderingHandler(
                 (EntityType<BeeEntity>) ForgeRegistries.ENTITIES.getValue(new ResourceLocation(MODID, beeType.id.getPath() + "_bee")),
-                (EntityRendererManager p_i226033_1_) -> new IronBeeRenderer(p_i226033_1_, beeType));
+                p_i226033_1_ -> new IronBeeRenderer(p_i226033_1_, beeType));
     }
   }
 

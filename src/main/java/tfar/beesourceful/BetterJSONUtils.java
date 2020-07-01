@@ -42,9 +42,7 @@ public class BetterJSONUtils {
   public static Fluid getFluid(JsonElement p_188172_0_, String p_188172_1_) {
     if (p_188172_0_.isJsonPrimitive()) {
       String lvt_2_1_ = p_188172_0_.getAsString();
-      return Registry.FLUID.getValue(new ResourceLocation(lvt_2_1_)).orElseThrow(() -> {
-        return new JsonSyntaxException("Expected " + p_188172_1_ + " to be a fluid, was unknown string '" + lvt_2_1_ + "'");
-      });
+      return Registry.FLUID.getValue(new ResourceLocation(lvt_2_1_)).orElseThrow(() -> new JsonSyntaxException("Expected " + p_188172_1_ + " to be a fluid, was unknown string '" + lvt_2_1_ + "'"));
     } else {
       throw new JsonSyntaxException("Expected " + p_188172_1_ + " to be a fluid, was " +  JSONUtils.toString(p_188172_0_));
     }
