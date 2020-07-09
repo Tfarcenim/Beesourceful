@@ -42,61 +42,6 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
     }
   }
 
-  @Override
-  public boolean releaseBee(BlockState state, CompoundNBT nbt, @Nullable List<Entity> entities, BeehiveTileEntity.State beehiveState) {
-    BlockPos blockpos = this.getPos();
-    if (shouldStayInHive(state,beehiveState)) {
-      return false;
-    } else {
-      nbt.remove("Passengers");
-      nbt.remove("Leash");
-      nbt.removeUuid("UUID");
-      Direction direction = state.get(BeehiveBlock.FACING);
-      BlockPos blockpos1 = blockpos.offset(direction);
-      if (!this.world.getBlockState(blockpos1).getCollisionShape(this.world, blockpos1).isEmpty()) {
-        return false;
-      } else {
-        Entity entity = EntityType.func_220335_a(nbt, this.world, entity1 -> entity1);
-        if (entity != null) {
-          float f = entity.getWidth();
-          double d0 = 0.55D + f / 2.0F;
-          double d1 = blockpos.getX() + 0.5D + d0 * direction.getXOffset();
-          double d2 = blockpos.getY() + 0.5D -  (entity.getHeight() / 2.0F);
-          double d3 = blockpos.getZ() + 0.5D + d0 * direction.getZOffset();
-          entity.setLocationAndAngles(d1, d2, d3, entity.rotationYaw, entity.rotationPitch);
-          if (entity instanceof IronBeeEntity) {
-            IronBeeEntity beeentity = (IronBeeEntity) entity;
-            if (this.hasFlowerPos() && !beeentity.hasFlower() && this.world.rand.nextFloat() < 0.9F) {
-              beeentity.setFlowerPos(this.flowerPos);
-            }
-
-            if (beehiveState == State.HONEY_DELIVERED) {
-              beeentity.onHoneyDelivered();
-              int i = getHoneyLevel(state);
-              if (i < 5) {
-                int j = this.world.rand.nextInt(100) == 0 ? 2 : 1;
-                if (i + j > 5) {
-                  --j;
-                }
-                this.honeycombs.add(beeentity.getHoneyComb());
-                this.world.setBlockState(this.getPos(), state.with(BeehiveBlock.HONEY_LEVEL, i + j));
-              }
-            }
-            beeentity.resetPollinationTicks();
-            if (entities != null) {
-              entities.add(beeentity);
-            }
-          }
-          BlockPos hivePos = this.getPos();
-          this.world.playSound(null, hivePos.getX(), hivePos.getY(),  hivePos.getZ(), SoundEvents.field_226132_ag_, SoundCategory.BLOCKS, 1.0F, 1.0F);
-          return this.world.addEntity(entity);
-        } else {
-          return false;
-        }
-      }
-    }
-  }
-
   public void tryEnterHive(Entity bee, boolean hasNectar, int ticksInHive) {
     if (!isFullOfBees()) {
       bee.removePassengers();
@@ -111,20 +56,20 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
           }
         }
         BlockPos pos = this.getPos();
-        this.world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.field_226131_af_, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        this.world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_BEEHIVE_ENTER, SoundCategory.BLOCKS, 1.0F, 1.0F);
       }
       if (bee.getType() == BeeSourceful.Objectholders.Entities.ender_bee){
-        this.world.addParticle(ParticleTypes.PORTAL, bee.getParticleX(0.5D),
+        /*this.world.addParticle(ParticleTypes.PORTAL, bee.getParticleX(0.5D),
                 bee.getRandomBodyY() - 0.25D, bee.getParticleZ(0.5D),
                 (world.rand.nextDouble() - 0.5D) * 2.0D, -world.rand.nextDouble(),
-                (world.rand.nextDouble() - 0.5D) * 2.0D);
+                (world.rand.nextDouble() - 0.5D) * 2.0D);*/
       }
       bee.remove();
     }
   }
 
   public boolean shouldStayInHive(BlockState state, State beehiveState){
-    return (this.world.isNight() || this.world.isRaining()) && beehiveState != BeehiveTileEntity.State.EMERGENCY;
+    return (this.world.isNightTime() || this.world.isRaining()) && beehiveState != BeehiveTileEntity.State.EMERGENCY;
   }
 
   @Override
@@ -148,8 +93,8 @@ public class IronBeehiveBlockEntity extends BeehiveTileEntity {
   }
 
   @Override
-  public void read(CompoundNBT nbt) {
-    super.read(nbt);
+  public void read(BlockState state,CompoundNBT nbt) {
+    super.read(state,nbt);
     if (nbt.contains("Honeycombs")){
       CompoundNBT combs = (CompoundNBT) nbt.get("Honeycombs");
       int i = 0;

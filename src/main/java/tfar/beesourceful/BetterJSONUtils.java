@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.fluids.FluidStack;
 
-public class BetterJSONUtils {
+public class BetterJSONUtils extends JSONUtils {
 
   public static double getDouble(JsonElement p_151220_0_, String p_151220_1_) {
     if (p_151220_0_.isJsonPrimitive() && p_151220_0_.getAsJsonPrimitive().isNumber()) {

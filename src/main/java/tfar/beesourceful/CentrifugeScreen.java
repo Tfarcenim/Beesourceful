@@ -1,5 +1,6 @@
 package tfar.beesourceful;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -26,19 +27,19 @@ public class CentrifugeScreen extends ContainerScreen<CentrifugeContainer> {
    * @param p_146976_3_
    */
   @Override
-  protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
+  protected void func_230450_a_(MatrixStack stack,float p_146976_1_, int p_146976_2_, int p_146976_3_) {
     ResourceLocation texture = new ResourceLocation(BeeSourceful.MODID,"textures/gui/centrifuge.png");
     this.minecraft.getTextureManager().bindTexture(texture);
     int i = (this.width - this.xSize) / 2;
     int j = (this.height - this.ySize) / 2;
-    this.blit(i, j, 0, 0, this.xSize, this.ySize);
+    this.blit(stack,i, j, 0, 0, this.xSize, this.ySize);
     double scaledprogress = 37d * this.container.centrifugeBlockEntity.time /
             Math.max(this.container.centrifugeBlockEntity.totalTime,1d);
-    this.blit(i + 62, j + 35, 176, 0, (int)scaledprogress, 24);
-    drawFluid();
+    this.blit(stack,i + 62, j + 35, 176, 0, (int)scaledprogress, 24);
+    drawFluid(stack);
   }
 
-  public void drawFluid() {
+  public void drawFluid(MatrixStack stack) {
     int scaledHeight = (int) (container.centrifugeBlockEntity.fluidTank.getFluidInTank(0).getAmount() * (64d/10000));
 
     int xPos = guiLeft + 160;
@@ -51,7 +52,7 @@ public class CentrifugeScreen extends ContainerScreen<CentrifugeContainer> {
       int color = fluidStack.getFluid().getAttributes().getColor(fluidStack);
       TextureAtlasSprite textureAtlasSprite = getFluidTexture(fluidStack);
       RenderSystem.color3f((color >> 16 & 0xff) / 255f, (color >> 8 & 0xff) / 255f, (color & 0xff) / 255f);
-      blit(xPos, yPos, 0, 8, scaledHeight, textureAtlasSprite);
+      blit(stack,xPos, yPos, 0, 8, scaledHeight, textureAtlasSprite);
     }
   }
 
@@ -62,20 +63,21 @@ public class CentrifugeScreen extends ContainerScreen<CentrifugeContainer> {
   }
 
   public static TextureAtlasSprite getSprite(ResourceLocation spriteLocation) {
-    return Minecraft.getInstance().getSpriteAtlas(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(spriteLocation);
+    return Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(spriteLocation);
   }
 
   @Override
-  public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
-    this.renderBackground();
-    super.render(p_render_1_, p_render_2_, p_render_3_);
-    this.renderHoveredToolTip(p_render_1_, p_render_2_);
+  public void render(MatrixStack stack,int p_render_1_, int p_render_2_, float p_render_3_) {
+    this.renderBackground(stack);
+    super.render(stack,p_render_1_, p_render_2_, p_render_3_);
+    this.func_230451_b_(stack,p_render_1_, p_render_2_);
   }
 
+
   @Override
-  protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-    int size = font.getStringWidth(title.getFormattedText());
+  protected void func_230459_a_(MatrixStack stack,int mouseX, int mouseY) {
+    int size = font.getStringWidth(title.getString());
     int start = (this.xSize - size)/2;
-    this.font.drawString(this.title.getFormattedText(), start, 5, 0x404040);
+    this.font.drawString(stack,this.title.getString(), start, 5, 0x404040);
   }
 }

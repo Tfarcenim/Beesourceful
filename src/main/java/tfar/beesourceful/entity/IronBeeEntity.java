@@ -42,15 +42,15 @@ public class IronBeeEntity extends BeeEntity {
     this.goalSelector.addGoal(0, new BeeEntity.StingGoal(this, 1.4, true));
     this.goalSelector.addGoal(1, new BeeEntity.EnterBeehiveGoal());
     this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
-    this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.fromTag(ItemTags.field_226159_I_), false));
+    this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.fromTag(ItemTags.SMALL_FLOWERS), false));
     this.pollinateGoal = new PollinateGoal2();
     this.goalSelector.addGoal(4, this.pollinateGoal);
     this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.25D));
     this.goalSelector.addGoal(5, new UpdateBeehiveGoal2());
-    this.moveToHiveGoal = new FindBeehiveGoal2();
-    this.goalSelector.addGoal(5, this.moveToHiveGoal);
-    this.moveToFlowerGoal = new FindFlowerGoal();
-    this.goalSelector.addGoal(6, this.moveToFlowerGoal);
+    this.findBeehiveGoal = new FindBeehiveGoal2();
+    this.goalSelector.addGoal(5, this.findBeehiveGoal);
+    this.findFlowerGoal = new FindFlowerGoal();
+    this.goalSelector.addGoal(6, this.findFlowerGoal);
     this.goalSelector.addGoal(7, new FindPollinationTargetGoal2());
     this.goalSelector.addGoal(8, new WanderGoal());
     this.goalSelector.addGoal(9, new SwimGoal(this));
@@ -89,7 +89,7 @@ public class IronBeeEntity extends BeeEntity {
      * ()Ljava/util/List;
      */
     public List<BlockPos> getNearbyFreeHives() {
-      BlockPos blockpos = new BlockPos(IronBeeEntity.this);
+      BlockPos blockpos = IronBeeEntity.this.getPositionUnderneath().up();
       PointOfInterestManager pointofinterestmanager = ((ServerWorld) world).getPointOfInterestManager();
       Stream<PointOfInterest> stream = pointofinterestmanager.func_219146_b(pointOfInterestType ->
                       pointOfInterestType == IronBeeEntity.this.getHivePoi()
@@ -115,7 +115,7 @@ public class IronBeeEntity extends BeeEntity {
   public void applyPollinationEffect(){
     if (rand.nextInt(1) == 0) {
       for (int i = 1; i <= 2; ++i) {
-        BlockPos beePosDown = (new BlockPos(IronBeeEntity.this)).down(i);
+        BlockPos beePosDown = IronBeeEntity.this.getPositionUnderneath();
         BlockState state = world.getBlockState(beePosDown);
         Block block = state.getBlock();
         if (validFillerBlock(block)) {
@@ -156,8 +156,8 @@ public class IronBeeEntity extends BeeEntity {
     }
   }
 
-  public Predicate<BlockState> getFlowerPredicate(){
-    return getType().beeProperties.flowerPredicate;
+  public Predicate<BlockState> getFlowerPredicate() {
+    return state -> state.getBlock().isIn(getType().beeProperties.flowers);
   }
 
   public final Block getOre(){
@@ -165,12 +165,12 @@ public class IronBeeEntity extends BeeEntity {
   }
 
   public final Block getAllowedHive() {
-    return getType().beeProperties.hive_block;
+    return getType().beeProperties.getHive();
   }
 
   @Nonnull
   public final PointOfInterestType getHivePoi(){
-    return getType().beeProperties.getHive();
+    return getType().beeProperties.getPOI();
   }
 
   @Override

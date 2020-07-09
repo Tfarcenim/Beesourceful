@@ -4,6 +4,6 @@
     "comb": "beesourceful:copper_honeycomb",
     "ore": "beesourceful:copper_ore",
     "flower": "minecraft:flowers",
-    "biome" : "all"
+    "biome" : "*"
   }
 }

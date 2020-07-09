@@ -1,0 +1,9 @@
+{
+  "bee_properties": {
+    "id": "beesourceful:emerald_bee",
+    "comb": "beesourceful:emerald_honeycomb",
+    "ore": "beesourceful:emerald_ore",
+    "flower": "minecraft:flowers",
+    "biome" : "*"
+  }
+}

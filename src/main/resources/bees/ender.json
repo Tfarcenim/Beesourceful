@@ -1,0 +1,9 @@
+{
+  "bee_properties": {
+    "id": "beesourceful:ender_bee",
+    "comb": "beesourceful:ender_honeycomb",
+    "ore": "beesourceful:ender_ore",
+    "flower": "minecraft:flowers",
+    "biome" : "*"
+  }
+}

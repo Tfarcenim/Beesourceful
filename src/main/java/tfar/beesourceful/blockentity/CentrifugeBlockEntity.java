@@ -1,5 +1,6 @@
 package tfar.beesourceful.blockentity;
 
+import net.minecraft.block.BlockState;
 import tfar.beesourceful.BeeSourceful;
 import tfar.beesourceful.CentrifugeContainer;
 import tfar.beesourceful.block.CentrifugeBlock;
@@ -190,14 +191,14 @@ public class CentrifugeBlockEntity extends TileEntity implements ITickableTileEn
 	}
 
 	@Override
-	public void read(CompoundNBT tag) {
+	public void read(BlockState state,CompoundNBT tag) {
 		CompoundNBT invTag = tag.getCompound("inv");
 		h.deserializeNBT(invTag);
 		CompoundNBT fluid = tag.getCompound("fluid");
 		fluidTank.deserializeNBT(fluid);
 		time = tag.getInt("time");
 		totalTime = tag.getInt("totalTime");
-		super.read(tag);
+		super.read(state,tag);
 	}
 
 	@Nonnull

@@ -1,6 +1,7 @@
 package tfar.beesourceful.jei;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import tfar.beesourceful.BeeSourceful;
 import tfar.beesourceful.blockentity.CentrifugeBlockEntity;
 import tfar.beesourceful.recipe.CentrifugeRecipe;
@@ -91,8 +92,8 @@ public class CentrifugeRecipeCategory implements IRecipeCategory<CentrifugeRecip
   }
 
   @Override
-  public void draw(CentrifugeRecipe recipe, double mouseX, double mouseY) {
-    this.arrow.draw(28, 21);
+  public void draw(CentrifugeRecipe recipe,MatrixStack stack, double mouseX, double mouseY) {
+    this.arrow.draw(stack,28, 21);
     DecimalFormat decimalFormat = new DecimalFormat("##%");
 
     Minecraft minecraft = Minecraft.getInstance();
@@ -104,28 +105,28 @@ public class CentrifugeRecipeCategory implements IRecipeCategory<CentrifugeRecip
       final double chance1 = recipe.outputs.get(0).getRight();
       if (chance1 < 1) {
         String chance1String = decimalFormat.format(chance1);
-        fontRenderer.drawString(chance1String, 62, 10, 0xff808080);
+        fontRenderer.drawString(stack,chance1String, 62, 10, 0xff808080);
       }
     }
     if (size > 1) {
       final double chance1 = recipe.outputs.get(1).getRight();
       if (chance1 < 1) {
         String chance1String = decimalFormat.format(chance1);
-        fontRenderer.drawString(chance1String, 82, 10, 0xff808080);
+        fontRenderer.drawString(stack,chance1String, 82, 10, 0xff808080);
       }
     }
     if (size > 2) {
       final double chance1 = recipe.outputs.get(2).getRight();
       if (chance1 < 1) {
         String chance1String = decimalFormat.format(chance1);
-        fontRenderer.drawString(chance1String, 62, 50, 0xff808080);
+        fontRenderer.drawString(stack,chance1String, 62, 50, 0xff808080);
       }
     }
     if (size > 3) {
       final double chance1 = recipe.outputs.get(3).getRight();
       if (chance1 < 1) {
         String chance1String = decimalFormat.format(chance1);
-        fontRenderer.drawString(chance1String, 82, 50, 0xff808080);
+        fontRenderer.drawString(stack,chance1String, 82, 50, 0xff808080);
       }
     }
   }

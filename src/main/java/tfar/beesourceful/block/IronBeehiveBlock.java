@@ -52,24 +52,24 @@ public class IronBeehiveBlock extends BeehiveBlock {
     boolean angerBees = false;
     if (honeyLevel >= 5) {
       if (itemstack.getItem() == Items.SHEARS) {
-        world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.field_226133_ah_, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        world.playSound(player, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.BLOCK_BEEHIVE_DROP, SoundCategory.NEUTRAL, 1.0F, 1.0F);
         dropResourceHoneycomb(world, pos);
         itemstack.damageItem(1, player, player1 -> player1.sendBreakAnimation(p_225533_5_));
         angerBees = true;
       } else if (itemstack.getItem() == Items.GLASS_BOTTLE) {
         itemstack.shrink(1);
-        world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        world.playSound(player, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
         if (itemstack.isEmpty()) {
-          player.setHeldItem(p_225533_5_, new ItemStack(Items.field_226638_pX_));
-        } else if (!player.inventory.addItemStackToInventory(new ItemStack(Items.field_226638_pX_))) {
-          player.dropItem(new ItemStack(Items.field_226638_pX_), false);
+          player.setHeldItem(p_225533_5_, new ItemStack(Items.HONEY_BOTTLE));
+        } else if (!player.inventory.addItemStackToInventory(new ItemStack(Items.HONEY_BOTTLE))) {
+          player.dropItem(new ItemStack(Items.HONEY_BOTTLE), false);
         }
         angerBees = true;
       }
     }
 
     if (angerBees) {
-      if (!CampfireBlock.isLitCampfireInRange(world, pos, 5)) {
+      if (!CampfireBlock.func_235474_a_(world, pos)) {
         if (this.hasBees(world, pos)) {
           this.angerNearbyBees(world, pos);
         }
@@ -78,7 +78,7 @@ public class IronBeehiveBlock extends BeehiveBlock {
       } else {
         this.takeHoney(world, state, pos);
         if (player instanceof ServerPlayerEntity) {
-          CriteriaTriggers.SAFELY_HARVEST_HONEY.test((ServerPlayerEntity) player, pos, itemstack1);
+         // CriteriaTriggers.field_232609_O_.test((ServerPlayerEntity) player, pos, itemstack1);
         }
       }
 
@@ -88,15 +88,15 @@ public class IronBeehiveBlock extends BeehiveBlock {
     }
   }
 
-  private void angerNearbyBees(World p_226881_1_, BlockPos p_226881_2_) {
-    List<BeeEntity> lvt_3_1_ = p_226881_1_.getEntitiesWithinAABB(BeeEntity.class, (new AxisAlignedBB(p_226881_2_)).grow(8.0D, 6.0D, 8.0D));
-    if (!lvt_3_1_.isEmpty()) {
-      List<PlayerEntity> lvt_4_1_ = p_226881_1_.getEntitiesWithinAABB(PlayerEntity.class, (new AxisAlignedBB(p_226881_2_)).grow(8.0D, 6.0D, 8.0D));
-      int lvt_5_1_ = lvt_4_1_.size();
+  private void angerNearbyBees(World world, BlockPos pos) {
+    List<BeeEntity> bees = world.getEntitiesWithinAABB(BeeEntity.class, (new AxisAlignedBB(pos)).grow(8.0D, 6.0D, 8.0D));
+    if (!bees.isEmpty()) {
+      List<PlayerEntity> players = world.getEntitiesWithinAABB(PlayerEntity.class, (new AxisAlignedBB(pos)).grow(8.0D, 6.0D, 8.0D));
+      int lvt_5_1_ = players.size();
 
-      for (BeeEntity lvt_7_1_ : lvt_3_1_) {
-        if (lvt_7_1_.getAttackTarget() == null) {
-          lvt_7_1_.setBeeAttacker(lvt_4_1_.get(p_226881_1_.rand.nextInt(lvt_5_1_)));
+      for (BeeEntity bee : bees) {
+        if (bee.getAttackTarget() == null) {
+          bee.func_230246_e_(players.get(world.rand.nextInt(lvt_5_1_)));
         }
       }
     }

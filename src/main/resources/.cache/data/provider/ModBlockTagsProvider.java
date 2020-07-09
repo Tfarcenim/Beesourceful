@@ -12,7 +12,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 
   @Override
   protected void registerTags() {
-    getBuilder(Tags.NETHER_FLOWERS).add(Blocks.NETHER_WART);
-    getBuilder(Tags.END_FLOWERS).add(Blocks.CHORUS_FLOWER);
+    //getBuilder(Tags.NETHER_FLOWERS).add(Blocks.NETHER_WART);
+    //getBuilder(Tags.END_FLOWERS).add(Blocks.CHORUS_FLOWER);
   }
 }

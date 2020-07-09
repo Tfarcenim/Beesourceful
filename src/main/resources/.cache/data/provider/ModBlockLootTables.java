@@ -13,11 +13,11 @@ public class ModBlockLootTables extends BlockLootTables {
     BeeSourceful.RegistryEvents.blocks.stream()
             .filter(block -> !(block instanceof IronBeehiveBlock))
             .forEach(this::registerDropSelfLootTable);
-    BeeSourceful.RegistryEvents.blocks.stream()
+    /*BeeSourceful.RegistryEvents.blocks.stream()
             .filter(IronBeehiveBlock.class::isInstance)
             .filter(block -> block != BeeSourceful.Objectholders.iron_beehive)
-            .forEach(block -> registerLootTable(block,BlockLootTables::createForBeeNest));
-    registerLootTable(BeeSourceful.Objectholders.iron_beehive,BlockLootTables::createForBeehive);
+            .forEach(block -> registerLootTable(block,BlockLootTables::createForBeeNest));*/
+    //registerLootTable(BeeSourceful.Objectholders.iron_beehive,BlockLootTables::createForBeehive);
   }
 
   @Nonnull

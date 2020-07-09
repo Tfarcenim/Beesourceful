@@ -1,7 +1,13 @@
 package tfar.beesourceful.feature;
 
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import net.minecraft.entity.EntityType;
+import net.minecraft.world.ISeedReader;
+import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.feature.structure.StructureManager;
+import tfar.beesourceful.entity.BeeEntityType;
 import tfar.beesourceful.entity.IronBeeEntity;
 import net.minecraft.nbt.CompoundNBT;
 import tfar.beesourceful.blockentity.IronBeehiveBlockEntity;
@@ -9,26 +15,24 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationSettings;
+
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.ReplaceBlockConfig;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class OreBeeNestFeature extends Feature<ReplaceBlockConfig> {
-  public final Supplier<EntityType<? extends IronBeeEntity>> beeType;
-  public OreBeeNestFeature(Function<Dynamic<?>, ? extends ReplaceBlockConfig> p_i49878_1_, Supplier<EntityType<? extends IronBeeEntity>> beeType) {
-    super(p_i49878_1_);
+  public final Supplier<BeeEntityType> beeType;
+  public OreBeeNestFeature(Codec<ReplaceBlockConfig> codec, Supplier<BeeEntityType> beeType) {
+    super(codec);
     this.beeType = beeType;
   }
 
   @Override
-  public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> p_212245_2_, Random rand, BlockPos pos, ReplaceBlockConfig config) {
+  public boolean func_230362_a_(ISeedReader world, StructureManager p_230362_2_, ChunkGenerator p_212245_2_, Random rand, BlockPos pos, ReplaceBlockConfig config) {
     if (world.getBlockState(pos).getBlock() == config.target.getBlock() && hasSpace(world,pos)) {
       world.setBlockState(pos, config.state, 2);
       TileEntity blockEntity = world.getTileEntity(pos);
@@ -52,5 +56,4 @@ public class OreBeeNestFeature extends Feature<ReplaceBlockConfig> {
 
   protected static final Direction[] horizontals = Arrays.stream(Direction.values())
           .filter(direction -> direction.getAxis().isHorizontal()).collect(Collectors.toList()).toArray(new Direction[0]);
-
 }

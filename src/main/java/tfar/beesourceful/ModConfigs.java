@@ -1,8 +1,10 @@
 package tfar.beesourceful;
 
-import tfar.beesourceful.util.BeeType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
+import tfar.beesourceful.entity.BeeEntityType;
+import tfar.beesourceful.entity.BeeProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +14,7 @@ public class ModConfigs {
   public static final ModConfigs SERVER;
   public static final ForgeConfigSpec SERVER_SPEC;
 
-  public static Map<BeeType, DataClass> configs = new HashMap<>();
+  public static Map<BeeProperties, DataClass> configs = new HashMap<>();
 
   static {
     final Pair<ModConfigs, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(ModConfigs::new);
@@ -22,9 +24,9 @@ public class ModConfigs {
 
   private ModConfigs(ForgeConfigSpec.Builder builder) {
     builder.push("worldgen");
-    for (BeeType beeType : BeeType.bee_registry.values()) {
-      builder.push(beeType.id.getPath()+"_bee_nest");
-      configs.put(beeType,
+    for (Map.Entry<ResourceLocation,BeeProperties> beeType : BeeProperties.bee_registry.entrySet()) {
+      builder.push(beeType.getKey().getPath()+"_bee_nest");
+      configs.put(beeType.getValue(),
               new DataClass(
                       builder.define("enabled", true),
                       builder.defineInRange("count", 5,0,Integer.MAX_VALUE),

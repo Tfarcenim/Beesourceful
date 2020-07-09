@@ -15,7 +15,7 @@ public abstract class HoneyFluid extends ForgeFlowingFluid {
 
 		@Override
 		public int getTickRate(IWorldReader world) {
-			return world.getDimension().isNether() ? 20 : 60;
+			return world.func_230315_m_().func_236040_e_() ? 20 : 60;
 		}
 
 	}
@@ -27,7 +27,7 @@ public abstract class HoneyFluid extends ForgeFlowingFluid {
 
 		@Override
 		public int getTickRate(IWorldReader world) {
-			return world.getDimension().isNether() ? 20 : 60;
+			return world.func_230315_m_().func_236040_e_() ? 20 : 60;
 		}
 
 	}

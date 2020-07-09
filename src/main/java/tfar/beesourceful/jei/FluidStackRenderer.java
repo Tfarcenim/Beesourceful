@@ -1,5 +1,6 @@
 package tfar.beesourceful.jei;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -49,23 +51,23 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
 		this.overlay = overlay;
 	}
 
-	public void render(int xPosition, int yPosition, @Nullable FluidStack fluidStack) {
+	public void render(MatrixStack matrixStack, int xPosition, int yPosition, @Nullable FluidStack fluidStack) {
 		RenderSystem.enableBlend();
 		RenderSystem.enableAlphaTest();
-		this.drawFluid(xPosition, yPosition, fluidStack);
+		this.drawFluid(matrixStack, xPosition, yPosition, fluidStack);
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		if (this.overlay != null) {
-			RenderSystem.pushMatrix();
-			RenderSystem.translatef(0.0F, 0.0F, 200.0F);
-			this.overlay.draw(xPosition, yPosition);
-			RenderSystem.popMatrix();
+			matrixStack.push();
+			matrixStack.translate(0.0D, 0.0D, 200.0D);
+			this.overlay.draw(matrixStack, xPosition, yPosition);
+			matrixStack.pop();
 		}
 
 		RenderSystem.disableAlphaTest();
 		RenderSystem.disableBlend();
 	}
 
-	private void drawFluid(int xPosition, int yPosition, @Nullable FluidStack fluidStack) {
+	private void drawFluid(MatrixStack matrixStack, int xPosition, int yPosition, @Nullable FluidStack fluidStack) {
 		if (fluidStack != null) {
 			Fluid fluid = fluidStack.getFluid();
 			if (fluid != null) {
@@ -82,14 +84,15 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
 					scaledAmount = this.height;
 				}
 
-				this.drawTiledSprite(xPosition, yPosition, this.width, this.height, fluidColor, scaledAmount, fluidStillSprite);
+				this.drawTiledSprite(matrixStack, xPosition, yPosition, this.width, this.height, fluidColor, scaledAmount, fluidStillSprite);
 			}
 		}
 	}
 
-	private void drawTiledSprite(int xPosition, int yPosition, int tiledWidth, int tiledHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
+	private void drawTiledSprite(MatrixStack matrixStack, int xPosition, int yPosition, int tiledWidth, int tiledHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
 		Minecraft minecraft = Minecraft.getInstance();
-		minecraft.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+		minecraft.getTextureManager().bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
+		Matrix4f matrix = matrixStack.getLast().getMatrix();
 		setGLColorFromInt(color);
 		int xTileCount = tiledWidth / 16;
 		int xRemainder = tiledWidth - xTileCount * 16;
@@ -106,7 +109,7 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
 				if (width > 0 && height > 0) {
 					int maskTop = 16 - height;
 					int maskRight = 16 - width;
-					drawTextureWithMasking((double)x, (double)y, sprite, maskTop, maskRight, 100.0D);
+					drawTextureWithMasking(matrix, (float)x, (float)y, sprite, maskTop, maskRight, 100.0F);
 				}
 			}
 		}
@@ -118,7 +121,7 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
 		Fluid fluid = fluidStack.getFluid();
 		FluidAttributes attributes = fluid.getAttributes();
 		ResourceLocation fluidStill = attributes.getStillTexture(fluidStack);
-		return minecraft.getSpriteAtlas(PlayerContainer.BLOCK_ATLAS_TEXTURE).apply(fluidStill);
+		return (TextureAtlasSprite)minecraft.getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(fluidStill);
 	}
 
 	private static void setGLColorFromInt(int color) {
@@ -129,44 +132,40 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
 		RenderSystem.color4f(red, green, blue, alpha);
 	}
 
-	private static void drawTextureWithMasking(double xCoord, double yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, double zLevel) {
-		double uMin = (double)textureSprite.getMinU();
-		double uMax = (double)textureSprite.getMaxU();
-		double vMin = (double)textureSprite.getMinV();
-		double vMax = (double)textureSprite.getMaxV();
-		uMax -= (double)maskRight / 16.0D * (uMax - uMin);
-		vMax -= (double)maskTop / 16.0D * (vMax - vMin);
+	private static void drawTextureWithMasking(Matrix4f matrix, float xCoord, float yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, float zLevel) {
+		float uMin = textureSprite.getMinU();
+		float uMax = textureSprite.getMaxU();
+		float vMin = textureSprite.getMinV();
+		float vMax = textureSprite.getMaxV();
+		uMax -= (float)maskRight / 16.0F * (uMax - uMin);
+		vMax -= (float)maskTop / 16.0F * (vMax - vMin);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-		bufferBuilder.vertex(xCoord, yCoord + 16.0D, zLevel).texture((float)uMin, (float)vMax).endVertex();
-		bufferBuilder.vertex(xCoord + 16.0D - (double)maskRight, yCoord + 16.0D, zLevel).texture((float)uMax, (float)vMax).endVertex();
-		bufferBuilder.vertex(xCoord + 16.0D - (double)maskRight, yCoord + (double)maskTop, zLevel).texture((float)uMax, (float)vMin).endVertex();
-		bufferBuilder.vertex(xCoord, yCoord + (double)maskTop, zLevel).texture((float)uMin, (float)vMin).endVertex();
+		bufferBuilder.pos(matrix, xCoord, yCoord + 16.0F, zLevel).tex(uMin, vMax).endVertex();
+		bufferBuilder.pos(matrix, xCoord + 16.0F - (float)maskRight, yCoord + 16.0F, zLevel).tex(uMax, vMax).endVertex();
+		bufferBuilder.pos(matrix, xCoord + 16.0F - (float)maskRight, yCoord + (float)maskTop, zLevel).tex(uMax, vMin).endVertex();
+		bufferBuilder.pos(matrix, xCoord, yCoord + (float)maskTop, zLevel).tex(uMin, vMin).endVertex();
 		tessellator.draw();
 	}
 
-	public List<String> getTooltip(FluidStack fluidStack, ITooltipFlag tooltipFlag) {
-		List<String> tooltip = new ArrayList();
+	public List<ITextComponent> getTooltip(FluidStack fluidStack, ITooltipFlag tooltipFlag) {
+		List<ITextComponent> tooltip = new ArrayList();
 		Fluid fluidType = fluidStack.getFluid();
-		if (fluidType == null) {
-			return tooltip;
-		} else {
+		if (fluidType != null) {
 			ITextComponent displayName = fluidStack.getDisplayName();
-			String displayNameFormatted = displayName.getFormattedText();
-			tooltip.add(displayNameFormatted);
 			int amount = fluidStack.getAmount();
 			String amountString;
-			if (this.tooltipMode == FluidStackRenderer.TooltipMode.SHOW_AMOUNT_AND_CAPACITY) {
+			if (this.tooltipMode == TooltipMode.SHOW_AMOUNT_AND_CAPACITY) {
 				amountString = I18n.format("jei.tooltip.liquid.amount.with.capacity", amount, this.capacityMb);
-				tooltip.add(TextFormatting.GRAY + amountString);
-			} else if (this.tooltipMode == FluidStackRenderer.TooltipMode.SHOW_AMOUNT) {
+				//tooltip.add(TextFormatting.GRAY + amountString);
+			} else if (this.tooltipMode == TooltipMode.SHOW_AMOUNT) {
 				amountString = I18n.format("jei.tooltip.liquid.amount", amount);
-				tooltip.add(TextFormatting.GRAY + amountString);
+				//tooltip.add(TextFormatting.GRAY + amountString);
 			}
 
-			return tooltip;
 		}
+		return tooltip;
 	}
 
 	enum TooltipMode {

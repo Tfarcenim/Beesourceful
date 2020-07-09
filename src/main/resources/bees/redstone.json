@@ -4,6 +4,6 @@
     "comb": "beesourceful:redstone_honeycomb",
     "ore": "beesourceful:redstone_ore",
     "flower": "minecraft:flowers",
-    "biome"
+    "biome" : "*"
   }
 }

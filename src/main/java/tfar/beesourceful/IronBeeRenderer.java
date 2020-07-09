@@ -1,10 +1,10 @@
 package tfar.beesourceful;
 
-import tfar.beesourceful.util.BeeType;
 import net.minecraft.client.renderer.entity.BeeRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.util.ResourceLocation;
+import tfar.beesourceful.entity.BeeEntityType;
 
 import javax.annotation.Nonnull;
 
@@ -15,18 +15,18 @@ public class IronBeeRenderer extends BeeRenderer {
   private final ResourceLocation PASSIVE_SKIN;
   private final ResourceLocation NECTAR_SKIN;
 
-  public IronBeeRenderer(EntityRendererManager p_i226033_1_, BeeType beeType) {
+  public IronBeeRenderer(EntityRendererManager p_i226033_1_, BeeEntityType beeType) {
     super(p_i226033_1_);
     String s = "textures/entity/";
-    ANGRY_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.id.getPath()+"_bee_angry.png");
-    ANGRY_NECTAR_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.id.getPath()+"_bee_angry_nectar.png");
-    PASSIVE_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.id.getPath()+"_bee.png");
-    NECTAR_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.id.getPath()+"_bee_nectar.png");
+    ANGRY_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.getRegistryName().getPath()+"_angry.png");
+    ANGRY_NECTAR_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.getRegistryName().getPath()+"_angry_nectar.png");
+    PASSIVE_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.getRegistryName().getPath()+".png");
+    NECTAR_SKIN = new ResourceLocation(BeeSourceful.MODID, s +beeType.getRegistryName().getPath()+"_nectar.png");
   }
 
   @Nonnull
   public ResourceLocation getEntityTexture(BeeEntity beeEntity) {
-    if (beeEntity.isAngry()) {
+    if (beeEntity.func_233678_J__()) {
       return beeEntity.hasNectar() ? ANGRY_NECTAR_SKIN : ANGRY_SKIN;
     } else {
       return beeEntity.hasNectar() ? NECTAR_SKIN : PASSIVE_SKIN;

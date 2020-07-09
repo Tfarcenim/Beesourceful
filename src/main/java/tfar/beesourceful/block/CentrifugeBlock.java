@@ -35,7 +35,7 @@ public class CentrifugeBlock extends Block {
   public static final BooleanProperty PROPERTY_ON = BooleanProperty.create("on");
 
   @Override
-  public ActionResultType onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+  public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
     if (!world.isRemote) {
       INamedContainerProvider blockEntity = state.getContainer(world,pos);
       if (blockEntity != null) {

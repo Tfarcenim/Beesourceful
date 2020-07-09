@@ -18,7 +18,7 @@ public class ModLanguageProvider extends LanguageProvider {
       add(item.getTranslationKey(), getNameFromItem(item));
     }
 
-    for (EntityType<?> entityType : BeeSourceful.RegistryEvents.entities){
+    for (EntityType<?> entityType : BeeSourceful.entities){
       add(entityType.getTranslationKey(),getNameFromEntity(entityType));
     }
     add("fluid.beesourceful.honey","Honey");
